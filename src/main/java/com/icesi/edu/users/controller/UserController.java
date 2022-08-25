@@ -33,4 +33,9 @@ public class UserController implements UserAPI {
     public List<UserDTO> getUsers() {
         return userService.getUsers().stream().map(userMapper::fromUser).collect(Collectors.toList());
     }
-}
+
+    private void checkEmailDomain(){
+
+    }//End checkEmailDomain
+
+}//End UserController
