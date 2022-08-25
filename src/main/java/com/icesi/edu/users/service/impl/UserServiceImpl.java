@@ -25,11 +25,26 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User createUser(User userDTO) {
-        return userRepository.save(userDTO);
+        if(notRepeatAttributes(userDTO)) {
+            return userRepository.save(userDTO);
+        } else {
+            throw new RuntimeException();
+        }
     }
 
     @Override
     public List<User> getUsers() {
         return StreamSupport.stream(userRepository.findAll().spliterator(),false).collect(Collectors.toList());
+    }
+
+    private boolean notRepeatAttributes(User userDTO){
+        List<User> users = getUsers();
+        for(User user : users){
+            String emailCurrent = userDTO.getEmail(), emailOldest = user.getEmail();
+            String phoneCurrent = userDTO.getPhoneNumber(), phoneOldest = user.getPhoneNumber();
+            if(emailCurrent.equalsIgnoreCase(emailOldest) || phoneCurrent.equals(phoneOldest))
+                return false;
+        }
+        return true;
     }
 }

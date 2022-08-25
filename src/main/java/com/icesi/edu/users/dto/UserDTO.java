@@ -4,11 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalTime;
 import java.util.UUID;
 
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
 public class UserDTO {
 
     private UUID id;
@@ -20,4 +20,10 @@ public class UserDTO {
     private String firstName;
 
     private String lastName;
+
+    private LocalTime currentTime;
+
+    public UserDTO(){
+        currentTime = LocalTime.now();
+    }
 }
