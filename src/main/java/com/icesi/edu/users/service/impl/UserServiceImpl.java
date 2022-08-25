@@ -25,11 +25,22 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User createUser(User userDTO) {
+        validateRepeatedEmail(userDTO.getEmail());
         return userRepository.save(userDTO);
     }
 
     @Override
     public List<User> getUsers() {
         return StreamSupport.stream(userRepository.findAll().spliterator(),false).collect(Collectors.toList());
+    }
+
+
+    private void validateRepeatedEmail(String email){
+
+        userRepository.findAll();
+
+        if(true){
+            throw new RuntimeException("An ");
+        }
     }
 }
