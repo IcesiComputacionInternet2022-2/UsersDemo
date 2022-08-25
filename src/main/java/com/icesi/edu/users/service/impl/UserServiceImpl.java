@@ -25,7 +25,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User createUser(User userDTO) {
-        return userRepository.save(userDTO);
+        if (getUsers().stream().noneMatch(user -> user.getEmail().equals(userDTO.getEmail()) && user.getPhoneNumber().equals(userDTO.getPhoneNumber()))) {
+            return userRepository.save(userDTO);
+        }
+        throw new RuntimeException();
     }
 
     @Override
