@@ -18,7 +18,8 @@ public class UserController implements UserAPI {
     public final UserService userService;
     public final UserMapper userMapper;
 
-    private final String EMAIL_REGEX = "";
+    private final String EMAIL_REGEX = "^[A-Za-z0-9]+@icesi\\.edu\\.co$";
+    private final String PHONE_NUMBER_REGEX = "^\\+57[0-9]{10}$";
 
     @Override
     public UserDTO getUser(UUID userId) {
@@ -39,9 +40,15 @@ public class UserController implements UserAPI {
     }
 
     private boolean isValidEmail(String email) {
-        if(email.matches("^[A-Za-z0-9]+@icesi\\.edu\\.co$"))
+        if(email.matches(EMAIL_REGEX))
             return true;
         throw new RuntimeException("Provided email does not contain the required domain");
+    }
+
+    private boolean isValidPhoneNumber(String phoneNumber) {
+        if(phoneNumber.matches(PHONE_NUMBER_REGEX))
+            return true;
+        throw new RuntimeException();
     }
 
     @Override
