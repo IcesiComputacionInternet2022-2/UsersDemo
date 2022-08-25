@@ -42,11 +42,19 @@ public class UserController implements UserAPI {
     private boolean isValidEmail(String email) {
         if(email.matches(EMAIL_REGEX))
             return true;
-        throw new RuntimeException("Provided email does not contain the required domain");
+        throw new RuntimeException();
     }
 
     private boolean isValidPhoneNumber(String phoneNumber) {
         if(phoneNumber.matches(PHONE_NUMBER_REGEX))
+            return true;
+        throw new RuntimeException();
+    }
+
+    private boolean isNumberOrEmailPresent(String email, String phoneNumber) {
+        if(email != null || phoneNumber != null)
+            return true;
+        else if(!email.isEmpty() || !phoneNumber.isEmpty())
             return true;
         throw new RuntimeException();
     }
