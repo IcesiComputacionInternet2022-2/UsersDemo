@@ -26,7 +26,22 @@ public class UserController implements UserAPI {
 
     @Override
     public UserDTO createUser(UserDTO userDTO) {
-        return userMapper.fromUser(userService.createUser(userMapper.fromDTO(userDTO)));
+        if (validUser(userDTO.getEmail(),userDTO.getPhoneNumber(),userDTO.getFirstName(),userDTO.getLastName()))
+            return userMapper.fromUser(userService.createUser(userMapper.fromDTO(userDTO)));
+        return null;
+    }
+
+    public boolean validUser(String email,String phoneNumber,String name,String lastName){
+        switch (validateNotNullEmailOrNumber(email,phoneNumber)){
+            case 0: //Both are not null
+                return validateEmail(email) && validateNumber(phoneNumber) && validateNameAndLastname(name,lastName);
+            case 1: //Email: not null and number: null
+                return validateEmail(email) && validateNameAndLastname(name,lastName);
+            case 2: //Email: null and number: not null
+                return validateNumber(phoneNumber) && validateNameAndLastname(name,lastName);
+            default: //both null
+                return false;
+        }
     }
 
     @Override
@@ -39,7 +54,21 @@ public class UserController implements UserAPI {
     private boolean validateNumber(String phoneNumber){
         return phoneNumber.matches("^(\\+57)[0-9]{10}"); //+57 and 10 numbers
     }
-    private boolean validateNameAndLastname(String nameOrLastname){
-        return nameOrLastname.matches("[aA-zZ ]{0,120}"); //More than 0 lesser than 120
+    private boolean validateNameAndLastname(String name,String lastname){
+        return name.matches("[aA-zZ ]{0,120}") && lastname.matches("[aA-zZ ]{0,120}"); //More than 0 lesser than 120
+    }
+
+    private int validateNotNullEmailOrNumber(String email,String number){
+       if(email != null){
+           if(number != null)
+               return 0; //Both are not null
+           else
+               return 1; //Email: not null and number: null
+       }
+       if(number!=null)
+           return 2; //Email: null and number: not null
+       else
+           return 3; //both null
+
     }
 }
