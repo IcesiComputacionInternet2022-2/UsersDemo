@@ -19,9 +19,5 @@ public class LiquibaseConfig {
         return liquibase;
     }
 
-    @Bean
-    public UserMapper userMapper(){
-        return new UserMapperImpl();
-    }
 
 }
