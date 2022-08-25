@@ -29,6 +29,10 @@ public class UserController implements UserAPI {
         return userMapper.fromUser(userService.createUser(userMapper.fromDTO(userDTO)));
     }
 
+    private boolean checkUserNull(UserDTO userDTO) {
+        return userDTO == null;
+    }
+
     @Override
     public List<UserDTO> getUsers() {
         return userService.getUsers().stream().map(userMapper::fromUser).collect(Collectors.toList());
