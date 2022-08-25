@@ -6,9 +6,9 @@ import com.icesi.edu.users.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -25,7 +25,22 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User createUser(User userDTO) {
+        if(findEmail(userDTO)) {
+            System.out.println("Ese email ya existe mi papá");
+        }
+
         return userRepository.save(userDTO);
+    }
+
+    private boolean findEmail(User user) {
+        Iterable<User> users = userRepository.findAll();
+        AtomicBoolean found = new AtomicBoolean(false);
+        users.forEach((p) -> {
+            if(p.getEmail().equals(user.getEmail())) {
+                found.set(true);
+            }
+        });
+        return found.get();
     }
 
     @Override
