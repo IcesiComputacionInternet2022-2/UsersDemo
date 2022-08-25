@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class UserController implements UserAPI {
 
-
+    private final int MAX_STRING_LENGTH = 120;
     public final UserService userService;
     public final UserMapper userMapper;
 
@@ -34,8 +34,31 @@ public class UserController implements UserAPI {
         return userService.getUsers().stream().map(userMapper::fromUser).collect(Collectors.toList());
     }
 
-    private void checkEmailDomain(){
-
+    private void checkEmailDomain(final String userEmail){
+        if(userEmail != null && !userEmail.matches(".*@icesi\\.edu\\.co"))
+            throw new RuntimeException();
     }//End checkEmailDomain
+
+    private void isEmail(final String userEmail){
+        if(userEmail != null && !userEmail.split("@")[0].matches(".*A-Za-z0-9"))
+            throw new RuntimeException();
+    }//End isEmail
+
+    private void checkNumberRegion(final String userPhoneNumber){
+        if(userPhoneNumber != null && userPhoneNumber.matches("^\\+57[0-9]{10}$"))
+            throw new RuntimeException();
+    }//End checkNumberRegion
+
+    private void existNumberOrEmail(final String userPhoneNumber,final String userEmail){
+        if(!( (userPhoneNumber != null && !userPhoneNumber.isEmpty())
+                || (userEmail != null && !userEmail.isEmpty()) ) )
+            throw new RuntimeException();
+    }//End existNumberOrEmail
+
+    private void verifyStringLength(final String string){
+        if(string.length() > MAX_STRING_LENGTH)
+            throw new RuntimeException();
+    }//End verifyStringLength
+
 
 }//End UserController
