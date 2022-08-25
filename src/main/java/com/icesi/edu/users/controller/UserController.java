@@ -26,11 +26,32 @@ public class UserController implements UserAPI {
 
     @Override
     public UserDTO createUser(UserDTO userDTO) {
-        return userMapper.fromUser(userService.createUser(userMapper.fromDTO(userDTO)));
+        if (validateEmail(userDTO.getEmail()) && validatePhone(userDTO.getPhoneNumber()))
+            return userMapper.fromUser(userService.createUser(userMapper.fromDTO(userDTO)));
+        else throw new RuntimeException("Correo invalido");
     }
 
     @Override
     public List<UserDTO> getUsers() {
         return userService.getUsers().stream().map(userMapper::fromUser).collect(Collectors.toList());
+    }
+    private boolean validateEmail(String email){
+        String user = email.split("@")[0];
+        String domain = email.split("@")[1];
+        if (domain.equals("icesi.edu.co") && user.matches("^[0-9a-zA-Z]+$"))
+            return true;
+        else return false;
+    }
+    private boolean validatePhone(String phone){
+        if (phone.substring(0,2).equals("+57") && phone.matches("^[0-9]+$")&&phone.length()==10)
+            return true;
+        else return false;
+    }
+
+    private boolean validateCamps(String email,String phone){
+        if (email.matches("^[0-9a-zA-Z]+$"))
+            if (phone.matches("^[0-9a-zA-Z]+$"))
+                return true;
+        else return false;
     }
 }
