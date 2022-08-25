@@ -26,11 +26,21 @@ public class UserController implements UserAPI {
 
     @Override
     public UserDTO createUser(UserDTO userDTO) {
+        String email = userDTO.getEmail();
+        String phoneNumber = userDTO.getPhoneNumber();
+        String firstName = userDTO.getFirstName();
+        String lastName = userDTO.getLastName();
         return userMapper.fromUser(userService.createUser(userMapper.fromDTO(userDTO)));
     }
 
     private boolean checkUserNull(UserDTO userDTO) {
         return userDTO == null;
+    }
+
+    private boolean checkEmailDomain(String email) {
+        if(email.matches(".*@icesi\\.edu\\.co"))
+            return true;
+        throw new RuntimeException("Provided email does not contain the required domain");
     }
 
     @Override
