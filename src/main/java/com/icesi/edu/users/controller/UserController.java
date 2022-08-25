@@ -15,9 +15,10 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class UserController implements UserAPI {
 
-
     public final UserService userService;
     public final UserMapper userMapper;
+
+    private final String EMAIL_REGEX = "";
 
     @Override
     public UserDTO getUser(UUID userId) {
@@ -37,8 +38,8 @@ public class UserController implements UserAPI {
         return userDTO == null;
     }
 
-    private boolean checkEmailDomain(String email) {
-        if(email.matches(".*@icesi\\.edu\\.co"))
+    private boolean isValidEmail(String email) {
+        if(email.matches("^[A-Za-z0-9]+@icesi\\.edu\\.co$"))
             return true;
         throw new RuntimeException("Provided email does not contain the required domain");
     }
