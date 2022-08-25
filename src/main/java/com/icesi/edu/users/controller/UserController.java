@@ -21,6 +21,7 @@ public class UserController implements UserAPI {
     private final String EMAIL_REGEX = "^[A-Za-z0-9]+@icesi\\.edu\\.co$";
     private final String PHONE_NUMBER_REGEX = "^\\+57[0-9]{10}$";
     private final int MAX_FIELD_LENGTH = 120;
+    private final String NAME_REGEX = "^[a-zA-Z]+$";
 
     @Override
     public UserDTO getUser(UUID userId) {
@@ -53,17 +54,24 @@ public class UserController implements UserAPI {
     }
 
     private boolean isNumberOrEmailPresent(String email, String phoneNumber) {
-        if(email != null || !email.isEmpty() || phoneNumber != null || !phoneNumber.isEmpty())
+        if((email != null && !email.isEmpty()) || (phoneNumber != null && !phoneNumber.isEmpty()))
             return true;
         throw new RuntimeException();
     }
 
-    private boolean checkFieldLength(String field) {
-        return field.length() <= MAX_FIELD_LENGTH;
+    private boolean checkNameLength(String name) {
+        return name.length() <= MAX_FIELD_LENGTH;
+    }
+
+    private boolean isValidName(String name) {
+        if(name.matches(NAME_REGEX))
+            return true;
+        throw new RuntimeException();
     }
 
     @Override
     public List<UserDTO> getUsers() {
         return userService.getUsers().stream().map(userMapper::fromUser).collect(Collectors.toList());
     }
+
 }
