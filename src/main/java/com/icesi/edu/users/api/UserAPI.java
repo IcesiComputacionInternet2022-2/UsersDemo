@@ -17,7 +17,7 @@ public interface UserAPI {
     public UserDTO getUser(@PathVariable UUID userId);
 
     @PostMapping()
-    public UserDTO createUser(@RequestBody UserDTO userDTO);
+    public UserDTO createUser(@RequestBody UserDTO userDTO) throws Exception;
 
     @GetMapping
     public List<UserDTO> getUsers();

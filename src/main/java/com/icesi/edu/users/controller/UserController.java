@@ -25,12 +25,40 @@ public class UserController implements UserAPI {
     }
 
     @Override
-    public UserDTO createUser(UserDTO userDTO) {
-        return userMapper.fromUser(userService.createUser(userMapper.fromDTO(userDTO)));
+    public UserDTO createUser(UserDTO userDTO) throws Exception {
+        boolean isValidUser = validateUser(userDTO);
+        if(isValidUser){
+            return userMapper.fromUser(userService.createUser(userMapper.fromDTO(userDTO)));
+        }else{
+            throw new Exception("Invalid data");
+        }
     }
 
     @Override
     public List<UserDTO> getUsers() {
         return userService.getUsers().stream().map(userMapper::fromUser).collect(Collectors.toList());
+    }
+
+    private boolean validateUser(UserDTO userDTO){
+        boolean isValidUser = false;
+        if(validateUserEmail(userDTO)){
+
+        }
+        return isValidUser;
+    }
+
+    private boolean validateUserEmail(UserDTO userDTO) {
+        return validateUserEmailDomain(userDTO) && validateUserEmailSpecialChars(userDTO);
+    }
+
+    private boolean validateUserEmailSpecialChars(UserDTO userDTO) {
+        return false;
+    }
+
+    private boolean validateUserEmailDomain(UserDTO userDTO) {
+        boolean isValidDomain;
+        String domain = userDTO.getEmail().split("@")[1];
+        isValidDomain = domain.equals("@icesi.edu.co");
+        return isValidDomain;
     }
 }
