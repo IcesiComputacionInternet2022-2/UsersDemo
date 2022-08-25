@@ -15,7 +15,8 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class UserController implements UserAPI {
 
-
+    private final static String DOMAIN = "@icesi.edu.co";
+    private final static String PREFIX = "+57";
     public final UserService userService;
     public final UserMapper userMapper;
 
@@ -27,6 +28,49 @@ public class UserController implements UserAPI {
     @Override
     public UserDTO createUser(UserDTO userDTO) {
         return userMapper.fromUser(userService.createUser(userMapper.fromDTO(userDTO)));
+    }
+
+    public void verifyInput(UserDTO userDTO) {
+        String email = userDTO.getEmail();
+        String phone = userDTO.getPhoneNumber();
+        if(verifyEmail(email) && verifyPhone(phone)){
+
+        }else{
+
+        }
+    }
+
+    private boolean verifyPhone(String phone) {
+        return validatePrefix(phone) && validateSpaces(phone) && validNumber(phone);
+    }
+
+    private boolean validNumber(String phone) {
+        String substring = phone.substring(PREFIX.length()-1);
+        return substring.length() == 10;
+    }
+
+    private boolean validateSpaces(String phone) {
+        return phone.matches("[1-10]+");
+    }
+
+    private boolean validatePrefix(String phone) {
+        return phone.startsWith(PREFIX);
+    }
+
+    private boolean verifyEmail(String email) {
+        int idx = email.length() - DOMAIN.length();
+
+        return email != null && verifyDomain(idx, email) && validateMail(idx, email);
+    }
+
+    public boolean validateMail(int  endIdx, String email){
+        email.substring(0, endIdx);
+        return email.matches("[a-zA-Z]+");
+    }
+
+    private boolean verifyDomain(int startIdx,String email){
+        String substring = email.substring(startIdx);
+        return substring.equals(DOMAIN);
     }
 
     @Override
