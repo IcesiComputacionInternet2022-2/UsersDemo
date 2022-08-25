@@ -20,11 +20,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getUser(UUID userId) {
+
         return userRepository.findById(userId).orElse(null);
     }
 
     @Override
     public User createUser(User userDTO) {
+
         return userRepository.save(userDTO);
     }
 
