@@ -26,11 +26,132 @@ public class UserController implements UserAPI {
 
     @Override
     public UserDTO createUser(UserDTO userDTO) {
-        return userMapper.fromUser(userService.createUser(userMapper.fromDTO(userDTO)));
+
+        if (userDTO.getEmail() != null){
+
+            if (validateEmail(userDTO.getEmail()) == true){
+
+                if (userDTO.getPhoneNumber() != null){
+
+                    if (validatePhoneNumber(userDTO.getPhoneNumber()) == true){
+
+                        if (validateName(userDTO.getFirstName(), userDTO.getLastName()) == true){
+
+                            return userMapper.fromUser(userService.createUser(userMapper.fromDTO(userDTO)));
+                        }else {
+
+                            return null;
+                        }
+                    }else {
+
+                        return null;
+                    }
+                }else {
+
+                    if (validateName(userDTO.getFirstName(), userDTO.getLastName()) == true){
+
+                        return userMapper.fromUser(userService.createUser(userMapper.fromDTO(userDTO)));
+                    }else{
+
+                        return null;
+                    }
+                }
+            }else{
+
+                return null;
+            }
+        } else if (userDTO.getPhoneNumber() != null) {
+
+            if (validatePhoneNumber(userDTO.getPhoneNumber())==true){
+
+                if (userDTO.getEmail() != null){
+
+                    if (validateEmail(userDTO.getEmail())== true){
+
+                        if (validateName(userDTO.getFirstName(), userDTO.getLastName()) == true){
+
+                            return userMapper.fromUser(userService.createUser(userMapper.fromDTO(userDTO)));
+                        }else{
+
+                            return null;
+                        }
+                    }else {
+
+                        return null;
+                    }
+                }else{
+
+                    if (validateName(userDTO.getFirstName(), userDTO.getLastName()) == true){
+
+                        return userMapper.fromUser(userService.createUser(userMapper.fromDTO(userDTO)));
+                    }else {
+
+                        return null;
+                    }
+                }
+            }else {
+
+                return null;
+            }
+        }else {
+
+            return null;
+        }
     }
 
     @Override
     public List<UserDTO> getUsers() {
         return userService.getUsers().stream().map(userMapper::fromUser).collect(Collectors.toList());
+    }
+
+
+    private boolean validateEmail(String s) {
+
+        String[] email = s.split("@");
+        boolean validated = false;
+
+        if (email[1].equals("@icesi.edu.co")) {
+
+            if (email[0].matches("/^[A-Za-z0-9\\s]+$/g")) {
+
+                validated = true;
+            }
+        }
+        return validated;
+    }
+
+    private boolean validatePhoneNumber(String s){
+
+        String[] phone = s.split("\\+");
+        boolean validated = false;
+
+        if (s.contains("+57")){
+
+            if (phone[1].matches("/^[0-9\\s]+$/g")){
+
+                if (s.length() ==13){
+
+                    validated = true;
+                }
+            }
+        }
+
+        return validated;
+    }
+
+    private boolean validateName(String name, String lastname){
+
+        boolean validated = false;
+        String fullName = name + " " + lastname;
+
+        if (fullName.length() < 120){
+
+            if (fullName.matches("/^[A-Za-z\\s]+$/g"));{
+
+                validated = true;
+            }
+        }
+
+        return validated;
     }
 }
