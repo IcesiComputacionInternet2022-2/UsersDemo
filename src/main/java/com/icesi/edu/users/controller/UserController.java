@@ -26,11 +26,45 @@ public class UserController implements UserAPI {
 
     @Override
     public UserDTO createUser(UserDTO userDTO) {
-        return userMapper.fromUser(userService.createUser(userMapper.fromDTO(userDTO)));
+        System.out.println(validateUserEmail(userDTO) +" "+ validateUserPhoneNumber(userDTO) +" "+
+                validateEmailOrPhoneNumberNotNull(userDTO) +" "+ validateFirstName(userDTO) +" "+
+                validateLastName(userDTO));
+        if(validateEmailOrPhoneNumberNotNull(userDTO) && validateFirstName(userDTO) &&
+                validateLastName(userDTO)){
+            return userMapper.fromUser(userService.createUser(userMapper.fromDTO(userDTO)));
+        }else {
+            throw new RuntimeException();
+        }
     }
 
     @Override
     public List<UserDTO> getUsers() {
         return userService.getUsers().stream().map(userMapper::fromUser).collect(Collectors.toList());
+    }
+
+    private boolean validateUserEmail(UserDTO userDTO){
+        String email = userDTO.getEmail();
+        return email != null && email.toUpperCase().endsWith("@icesi.edu.co") &&
+                email.substring(0, email.length()-13).matches("[a-zA-Z0-9]+");
+    }
+
+    private boolean validateUserPhoneNumber(UserDTO userDTO){
+        String phoneNumber = userDTO.getPhoneNumber();
+        return phoneNumber != null &&
+                phoneNumber.startsWith("+57") && phoneNumber.substring(1).matches("[0-9]+");
+    }
+
+    private boolean validateEmailOrPhoneNumberNotNull(UserDTO userDTO){
+        return userDTO.getEmail()!=null || userDTO.getPhoneNumber()!=null;
+    }
+
+    private boolean validateFirstName(UserDTO userDTO){
+        String firstName = userDTO.getFirstName();
+        return firstName != null && firstName.length() <= 120 && firstName.matches("[a-zA-Z]+");
+    }
+
+    private boolean validateLastName(UserDTO userDTO){
+        String lastName = userDTO.getFirstName();
+        return lastName != null || lastName.length() <= 120 && lastName.matches("[a-zA-Z]+");
     }
 }
