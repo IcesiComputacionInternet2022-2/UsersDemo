@@ -26,11 +26,29 @@ public class UserController implements UserAPI {
 
     @Override
     public UserDTO createUser(UserDTO userDTO) {
-        return userMapper.fromUser(userService.createUser(userMapper.fromDTO(userDTO)));
+        if (validateUser(userDTO))
+            return userMapper.fromUser(userService.createUser(userMapper.fromDTO(userDTO)));
+        throw new RuntimeException();
     }
 
     @Override
     public List<UserDTO> getUsers() {
         return userService.getUsers().stream().map(userMapper::fromUser).collect(Collectors.toList());
+    }
+
+    private boolean validateUser(UserDTO userDTO) {
+        return validateEmail(userDTO.getEmail()) && validatePhoneNumber(userDTO.getEmail()) && (!userDTO.getEmail().isEmpty() || !userDTO.getPhoneNumber().isEmpty() && validateFirstLastNames(userDTO.getFirstName(), userDTO.getLastName()));
+    }
+
+    private boolean validateEmail(String userEmail) {
+        return userEmail.matches("\\w+@icesi.edu.co$");
+    }
+
+    private boolean validatePhoneNumber(String userPhoneNumber) {
+        return userPhoneNumber.matches("^\\+57\\d{10}");
+    }
+
+    private boolean validateFirstLastNames(String firstName, String lastName) {
+        return firstName.matches("[a-zA-Z]{0,120}") && lastName.matches("[a-zA-Z]{0,120}");
     }
 }
