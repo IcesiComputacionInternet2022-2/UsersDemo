@@ -30,7 +30,7 @@ public class UserController implements UserAPI {
         if(isValidUser){
             return userMapper.fromUser(userService.createUser(userMapper.fromDTO(userDTO)));
         }else{
-            throw new Exception("Invalid data");
+            throw new RuntimeException();
         }
     }
 
@@ -40,25 +40,67 @@ public class UserController implements UserAPI {
     }
 
     private boolean validateUser(UserDTO userDTO){
-        boolean isValidUser = false;
-        if(validateUserEmail(userDTO)){
+        return validateUserNonNulls(userDTO) && validateUserEmail(userDTO) && validateUserPhoneNumber(userDTO) && validateUserNames(userDTO);
+    }
 
+    private boolean validateUserNonNulls(UserDTO userDTO){
+        return validateUserEmailNotNull(userDTO.getEmail()) && validateUserPhoneNotNull(userDTO.getPhoneNumber());
+    }
+
+    private boolean validateUserPhoneNotNull(String phoneNumber) {
+        return phoneNumber != null;
+    }
+
+    private boolean validateUserEmailNotNull(String email) {
+        return email != null;
+    }
+
+    private boolean validateUserNames(UserDTO userDTO) {
+        return validateUserNamesSize(userDTO) && validateUserNamesContent(userDTO);
+    }
+
+    private boolean validateUserNamesContent(UserDTO userDTO) {
+        return userDTO.getFirstName().matches("[a-zA-Z]+") && userDTO.getLastName().matches("[a-zA-Z]+");
+    }
+
+    private boolean validateUserNamesSize(UserDTO userDTO) {
+        return userDTO.getFirstName().length() == 120 && userDTO.getLastName().length() == 120;
+    }
+
+    private boolean validateUserPhoneNumber(UserDTO userDTO) {
+        if(validateUserPhoneNotNull(userDTO.getPhoneNumber())){
+            return validateUserPhoneNumberExtension(userDTO) && validateUserPhoneNumberContent(userDTO);
         }
-        return isValidUser;
-    }
-
-    private boolean validateUserEmail(UserDTO userDTO) {
-        return validateUserEmailDomain(userDTO) && validateUserEmailSpecialChars(userDTO);
-    }
-
-    private boolean validateUserEmailSpecialChars(UserDTO userDTO) {
         return false;
     }
 
-    private boolean validateUserEmailDomain(UserDTO userDTO) {
-        boolean isValidDomain;
-        String domain = userDTO.getEmail().split("@")[1];
-        isValidDomain = domain.equals("@icesi.edu.co");
-        return isValidDomain;
+    private boolean validateUserPhoneNumberContent(UserDTO userDTO) {
+        String phoneNumber = userDTO.getPhoneNumber();
+        return phoneNumber.length() == "+57XXXXXXXXXX".length() && phoneNumber.matches("[0-9]*");
     }
+
+    private boolean validateUserPhoneNumberExtension(UserDTO userDTO) {
+        return userDTO.getPhoneNumber().startsWith("+57%");
+    }
+
+    private boolean validateUserEmail(UserDTO userDTO){
+        if(validateUserEmailNotNull(userDTO.getEmail())){
+            String[] email = userDTO.getEmail().split("@");
+            if(email.length == 2){
+                return  validateUserEmailDomain(email[1]) && validateUserEmailSpecialChars(email[0]);
+            }
+        }
+
+        return false;
+    }
+
+    private boolean validateUserEmailSpecialChars(String user) {
+        return user.matches("[a-zA-Z0-9]+");
+    }
+
+    private boolean validateUserEmailDomain(String domain) {
+        return domain.equals("@icesi.edu.co");
+    }
+
+    
 }
