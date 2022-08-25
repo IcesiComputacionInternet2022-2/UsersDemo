@@ -3,6 +3,7 @@ package com.icesi.edu.users.controller;
 import com.icesi.edu.users.api.UserAPI;
 import com.icesi.edu.users.dto.UserDTO;
 import com.icesi.edu.users.mapper.UserMapper;
+import com.icesi.edu.users.model.User;
 import com.icesi.edu.users.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,16 +28,16 @@ public class UserController implements UserAPI {
 
     @Override
     public UserDTO createUser(UserDTO userDTO) {
-        return userMapper.fromUser(userService.createUser(userMapper.fromDTO(userDTO)));
+        return verifyInput(userDTO);
     }
 
-    public void verifyInput(UserDTO userDTO) {
+    public UserDTO verifyInput(UserDTO userDTO) {
         String email = userDTO.getEmail();
         String phone = userDTO.getPhoneNumber();
         if(verifyEmail(email) && verifyPhone(phone)){
-
+            return userMapper.fromUser(userService.createUser(userMapper.fromDTO(userDTO)));
         }else{
-
+            return new UserDTO(null,null,null,null,null);
         }
     }
 
@@ -50,7 +51,7 @@ public class UserController implements UserAPI {
     }
 
     private boolean validateSpaces(String phone) {
-        return phone.matches("[1-10]+");
+        return phone.matches("[1-9]+");
     }
 
     private boolean validatePrefix(String phone) {
