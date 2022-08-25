@@ -21,5 +21,7 @@ public interface UserAPI {
 
     @GetMapping
     public List<UserDTO> getUsers();
-
+    
+    @PostMapping
+    public boolean verifyEmail(String email);
 }

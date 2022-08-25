@@ -1,5 +1,4 @@
 package com.icesi.edu.users.controller;
-
 import com.icesi.edu.users.api.UserAPI;
 import com.icesi.edu.users.dto.UserDTO;
 import com.icesi.edu.users.mapper.UserMapper;
@@ -15,9 +14,8 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class UserController implements UserAPI {
 
-
-    public final UserService userService;
-    public final UserMapper userMapper;
+    public final UserService userService = null;
+    public final UserMapper userMapper = null;
 
     @Override
     public UserDTO getUser(UUID userId) {
@@ -33,4 +31,14 @@ public class UserController implements UserAPI {
     public List<UserDTO> getUsers() {
         return userService.getUsers().stream().map(userMapper::fromUser).collect(Collectors.toList());
     }
+
+	@Override
+	public boolean verifyEmail(String email) {
+		//String[] parts = line.split("\\|");
+		//double part1 = Double.parseDouble(parts[0]);
+		//double part2 = Double.parseDouble(parts[1]);
+		return false;
+	}
+    
+
 }

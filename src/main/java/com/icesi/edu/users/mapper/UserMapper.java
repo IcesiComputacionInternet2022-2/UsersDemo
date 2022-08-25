@@ -6,7 +6,6 @@ import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
 public interface UserMapper {
-
      User fromDTO(UserDTO userDTO);
      UserDTO fromUser(User user);
 }

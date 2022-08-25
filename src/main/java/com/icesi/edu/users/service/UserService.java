@@ -11,11 +11,11 @@ import java.util.List;
 import java.util.UUID;
 
 public interface UserService {
-
-
     public User getUser(@PathVariable UUID userId);
 
     public User createUser(@RequestBody User userDTO);
 
     public List<User> getUsers();
+    
+    public boolean verifyEmail(String email);
 }

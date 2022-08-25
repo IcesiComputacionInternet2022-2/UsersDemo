@@ -16,7 +16,7 @@ import java.util.stream.StreamSupport;
 @Service
 public class UserServiceImpl implements UserService {
 
-    public final UserRepository userRepository;
+    public final UserRepository userRepository = null;
 
     @Override
     public User getUser(UUID userId) {
@@ -32,4 +32,10 @@ public class UserServiceImpl implements UserService {
     public List<User> getUsers() {
         return StreamSupport.stream(userRepository.findAll().spliterator(),false).collect(Collectors.toList());
     }
+
+	@Override
+	public boolean verifyEmail(String email) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }
