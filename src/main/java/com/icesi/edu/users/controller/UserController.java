@@ -64,11 +64,13 @@ public class UserController implements UserAPI {
     }
 
     private boolean validateUserNamesSize(UserDTO userDTO) {
-        return userDTO.getFirstName().length() == 120 && userDTO.getLastName().length() == 120;
+        return userDTO.getFirstName().length() <= 120 && userDTO.getLastName().length() <= 120;
     }
 
     private boolean validateUserPhoneNumber(UserDTO userDTO) {
         if(validateUserPhoneNotNull(userDTO.getPhoneNumber())){
+            System.out.println(validateUserPhoneNumberExtension(userDTO));
+            System.out.println(validateUserPhoneNumberContent(userDTO));
             return validateUserPhoneNumberExtension(userDTO) && validateUserPhoneNumberContent(userDTO);
         }
         return false;
@@ -76,11 +78,11 @@ public class UserController implements UserAPI {
 
     private boolean validateUserPhoneNumberContent(UserDTO userDTO) {
         String phoneNumber = userDTO.getPhoneNumber();
-        return phoneNumber.length() == "+57XXXXXXXXXX".length() && phoneNumber.matches("[0-9]*");
+        return phoneNumber.length() == "+57XXXXXXXXXX".length() && phoneNumber.replace("+","").matches("[0-9]+");
     }
 
     private boolean validateUserPhoneNumberExtension(UserDTO userDTO) {
-        return userDTO.getPhoneNumber().startsWith("+57%");
+        return userDTO.getPhoneNumber().startsWith("+57");
     }
 
     private boolean validateUserEmail(UserDTO userDTO){
@@ -90,7 +92,6 @@ public class UserController implements UserAPI {
                 return  validateUserEmailDomain(email[1]) && validateUserEmailSpecialChars(email[0]);
             }
         }
-
         return false;
     }
 
@@ -99,7 +100,7 @@ public class UserController implements UserAPI {
     }
 
     private boolean validateUserEmailDomain(String domain) {
-        return domain.equals("@icesi.edu.co");
+        return domain.equals("icesi.edu.co");
     }
 
     
