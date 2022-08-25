@@ -33,4 +33,13 @@ public class UserController implements UserAPI {
     public List<UserDTO> getUsers() {
         return userService.getUsers().stream().map(userMapper::fromUser).collect(Collectors.toList());
     }
+    private boolean validateEmail(String email){
+        return email.matches("\\w+@icesi.edu.co$"); //Domain and no special characters
+    }
+    private boolean validateNumber(String phoneNumber){
+        return phoneNumber.matches("^(\\+57)[0-9]{10}"); //+57 and 10 numbers
+    }
+    private boolean validateNameAndLastname(String nameOrLastname){
+        return nameOrLastname.matches("[aA-zZ ]{0,120}"); //More than 0 lesser than 120
+    }
 }

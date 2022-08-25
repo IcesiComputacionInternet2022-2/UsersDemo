@@ -78,7 +78,7 @@ public class UserServiceTest {
         User user2 = new User(uuid2,email2,phoneNumber2,firstName2,lastName2);
 
         userService.getUsers();
-        verify(userRepository,times(1)).findAll(any());
+        verify(userRepository,times(1)).findAll();
 
 
     }
