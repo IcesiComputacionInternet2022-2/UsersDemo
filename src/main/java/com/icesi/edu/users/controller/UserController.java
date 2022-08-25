@@ -20,6 +20,7 @@ public class UserController implements UserAPI {
 
     private final String EMAIL_REGEX = "^[A-Za-z0-9]+@icesi\\.edu\\.co$";
     private final String PHONE_NUMBER_REGEX = "^\\+57[0-9]{10}$";
+    private final int MAX_FIELD_LENGTH = 120;
 
     @Override
     public UserDTO getUser(UUID userId) {
@@ -55,6 +56,10 @@ public class UserController implements UserAPI {
         if(email != null || !email.isEmpty() || phoneNumber != null || !phoneNumber.isEmpty())
             return true;
         throw new RuntimeException();
+    }
+
+    private boolean checkFieldLength(String field) {
+        return field.length() <= MAX_FIELD_LENGTH;
     }
 
     @Override
