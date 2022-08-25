@@ -26,79 +26,11 @@ public class UserController implements UserAPI {
 
     @Override
     public UserDTO createUser(UserDTO userDTO) {
-
-        validateMandatoryField(
-                userMapper.fromDTO(userDTO).getEmail(),
-                userMapper.fromDTO(userDTO).getPhoneNumber()
-                );
-
-        validateFirstNameOrLastName(userMapper.fromDTO(userDTO).getFirstName(),"firstName");
-        validateFirstNameOrLastName(userMapper.fromDTO(userDTO).getLastName(),"lastName");
-
         return userMapper.fromUser(userService.createUser(userMapper.fromDTO(userDTO)));
     }
 
     @Override
     public List<UserDTO> getUsers() {
         return userService.getUsers().stream().map(userMapper::fromUser).collect(Collectors.toList());
-    }
-
-    private void validateEmail(String email) {
-        String[] emailSplinted = email.split("@");
-        //Validate Domain
-        String validDomain = "@icesi.edu.co";
-        String domain = "@" + emailSplinted[1];
-        if(!domain.equals(validDomain)){
-            throw new RuntimeException("The domain is wrong");
-        }
-
-        //Validate special characters
-        String regex = "[A-Za-z\\d]+";
-        if(!emailSplinted[0].matches(regex)){
-            throw new RuntimeException("The email id invalid");
-        }
-    }
-
-    private void validatePhone(String phone){
-        String regex = "^\\+57";
-        //Validate Prefix
-        if(!phone.matches(regex)){
-            throw new RuntimeException("The phone number must have the colombian prefix");
-        }
-
-        //Validate spaces and format
-
-        regex = "\\+57\\d{10}";
-
-        if(!phone.matches(regex)){
-            throw new RuntimeException("The phone number is not valid");
-        }
-    }
-
-    private  void validateMandatoryField(String email, String phoneNumber){
-        if(email.isEmpty()&&phoneNumber.isEmpty()){
-            throw new RuntimeException("Either email or phone number must be present");
-        }
-
-        if (!email.isEmpty()){
-            validateEmail(email);
-        }
-
-        if (!phoneNumber.isEmpty()){
-            validatePhone(phoneNumber);
-        }
-    }
-
-    private void validateFirstNameOrLastName(String anyName, String option){
-        //Validate max length
-        if(anyName.length()<=120){
-            throw new RuntimeException("The "+option+" should not have more than 120 characters");
-        }
-
-        //Validate format
-        String regex = "[A-Za-z\\s]";
-        if(!anyName.matches(regex)){
-            throw new RuntimeException("The "+option+" should not have special characters or numbers");
-        }
     }
 }
