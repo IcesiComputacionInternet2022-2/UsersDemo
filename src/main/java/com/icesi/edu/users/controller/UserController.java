@@ -52,9 +52,7 @@ public class UserController implements UserAPI {
     }
 
     private boolean isNumberOrEmailPresent(String email, String phoneNumber) {
-        if(email != null || phoneNumber != null)
-            return true;
-        else if(!email.isEmpty() || !phoneNumber.isEmpty())
+        if(email != null || !email.isEmpty() || phoneNumber != null || !phoneNumber.isEmpty())
             return true;
         throw new RuntimeException();
     }
