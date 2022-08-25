@@ -26,11 +26,55 @@ public class UserController implements UserAPI {
 
     @Override
     public UserDTO createUser(UserDTO userDTO) {
+        String email = userDTO.getEmail(), phone = userDTO.getPhoneNumber();
+        if (!(validDomain(email) && validEmail(email) && validCountryCode(phone) && validCPhone(phone) && emailOrPhone(phone, email) &&
+        nameLength(userDTO.getFirstName(), userDTO.getLastName()) && validNameFormat(userDTO.getFirstName(), userDTO.getLastName())))
+            throw new RuntimeException("Invalid data");
         return userMapper.fromUser(userService.createUser(userMapper.fromDTO(userDTO)));
     }
 
     @Override
     public List<UserDTO> getUsers() {
         return userService.getUsers().stream().map(userMapper::fromUser).collect(Collectors.toList());
+    }
+
+
+    /* Validations */
+
+    private boolean validDomain(String email) {
+        String domain = "@icesi.edu.co";
+        return email.toLowerCase().contains(domain);
+    }
+
+    private boolean validEmail(String email) {
+        int atCount = email.length() - email.replaceAll("@", "").length();
+        int dotCount = email.length() - email.replaceAll("\\.", "").length();
+        String pattern = "[^a-zA-z0-9\\-_]";
+
+        return !email.matches(pattern) && atCount == 1 && dotCount == 2;
+    }
+
+    private boolean validCountryCode(String phone) {
+        return phone.substring(0, 3).equals("+57");
+    }
+
+    private boolean validCPhone(String phone) {
+        return phone.length() == 13 && !phone.matches("[^0-9+]");
+    }
+
+    private boolean emailOrPhone(String phone, String email) {
+        return (email != null && !email.isBlank()) || (phone != null && !phone.isBlank());
+    }
+
+    private boolean nameLength(String name, String lastName) {
+        int nameLen = name.length();
+        int lastLen = lastName.length();
+        int CAP = 120;
+        return nameLen <= CAP && lastLen <= CAP;
+    }
+
+    private boolean validNameFormat(String name, String lastName) {
+        String pattern = "[^a-zA-Z0-9]";
+        return !name.matches(pattern) && !lastName.matches(pattern);
     }
 }
