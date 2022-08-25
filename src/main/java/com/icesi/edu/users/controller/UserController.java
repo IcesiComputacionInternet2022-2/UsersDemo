@@ -26,7 +26,27 @@ public class UserController implements UserAPI {
 
     @Override
     public UserDTO createUser(UserDTO userDTO) {
-        return userMapper.fromUser(userService.createUser(userMapper.fromDTO(userDTO)));
+        if (validateUser(userDTO)) return userMapper.fromUser(userService.createUser(userMapper.fromDTO(userDTO)));
+        return null;
+    }
+
+
+    private boolean validateUser(UserDTO user){
+        return validateEmail(user.getEmail()) && validatePhone(user.getPhoneNumber()) && validateName(user.getFirstName()) && validateName(user.getLastName());
+    }
+    private boolean validateEmail(String email){
+        String patternEmail = "\\w+@icesi.edu.co$";
+        return email.matches(patternEmail);
+    }
+
+    private boolean validatePhone(String phone){
+        String patternPhone = "^(\\+57)[0-9]{10}";
+        return phone.matches(patternPhone);
+    }
+
+    private boolean validateName(String name){
+        String patternNames = "[aA-zZ ]{0,120}";
+        return name.matches(patternNames);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.icesi.edu.users.service.impl;
 
+import com.icesi.edu.users.dto.UserDTO;
 import com.icesi.edu.users.model.User;
 import com.icesi.edu.users.repository.UserRepository;
 import com.icesi.edu.users.service.UserService;
@@ -25,7 +26,18 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User createUser(User userDTO) {
-        return userRepository.save(userDTO);
+
+        if (availableData(userDTO))return userRepository.save(userDTO);
+        return null;
+    }
+
+    private boolean availableData(User usr){
+        List<User> users = getUsers();
+        for (User x:users){
+            if (x.getPhoneNumber().equals(usr.getPhoneNumber()) || x.getEmail().equals(usr.getEmail())) return false;
+        }
+
+        return true;
     }
 
     @Override
