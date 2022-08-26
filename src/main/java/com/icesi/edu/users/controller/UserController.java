@@ -29,28 +29,31 @@ public class UserController implements UserAPI {
 
     @Override
     public UserDTO createUser(UserDTO userDTO) {
-        return userMapper.fromUser(userService.createUser(userMapper.fromDTO(userDTO)));
+        String email = userDTO.getEmail();
+        String phone = userDTO.getPhoneNumber();
+        String firstname = userDTO.getFirstName();
+        String lastname = userDTO.getLastName();
+        if (isEmailCorrect(email) && isPhoneCorrect(phone) && isFirstnameCorrect(firstname) && isLastnameCorrect(lastname))
+            return userMapper.fromUser(userService.createUser(userMapper.fromDTO(userDTO)));
+        else
+            throw new RuntimeException();
     }
 
     //Email Validation
-    public boolean belongToDomain (String string) {return string.endsWith(domain);}
-
-    private String getUsernameDomain (String email) {return email.substring(0,email.indexOf(domain));}
-
-    public boolean isValidEmail (String emailUsername) {
-        Pattern pattern = Pattern.compile("[^a-z0-9 ]", Pattern.CASE_INSENSITIVE);
-        Matcher matcher = pattern.matcher(emailUsername);
-
-        return matcher.find();
-    }
+    private boolean isEmailCorrect (String email) {return email.matches("^\\w+@icesi\\.edu\\.co$");}
+    //===================================================================================
 
     //Phone Validation
-    public boolean hasColombianPrefix (String number) {return number.startsWith("+57");}
+    private boolean isPhoneCorrect (String number) {return number.matches("\\+573\\d{9}$");}
 
-    public boolean hasWhitespaces (String number) {return number.contains(" ");}
+    //===================================================================================
 
-    public boolean isValidNumber (String number) {return number.matches("(\\+573)\\d{10}");}
+    //Name Validation
+    private boolean isFirstnameCorrect (String firstName) {return firstName.matches("^^([a-zA-Z]\\s?){1,120}$");}
 
+    private boolean isLastnameCorrect (String lastName) {return lastName.matches("^([a-zA-Z]\\s?){1,120}$");}
+
+    //===================================================================================
     @Override
     public List<UserDTO> getUsers() {
         return userService.getUsers().stream().map(userMapper::fromUser).collect(Collectors.toList());
