@@ -21,18 +21,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getUser(UUID userId) {
-        User user = userRepository.findById(userId).orElse(null);
-        if(user != null){
-            user.setDate(LocalDate.now().toString());
-        }
-        return user;
+        return userRepository.findById(userId).orElse(null);
     }
 
     @Override
     public User createUser(User userDTO) {
-        if(validateNonRepeated(userDTO.getEmail(),userDTO.getPhoneNumber()))
+        if(!isRepeated(userDTO.getEmail(),userDTO.getPhoneNumber())){
+            System.out.println(userDTO.getEmail());
             return userRepository.save(userDTO);
-        throw new RuntimeException("Repeted email or phoneNumber");
+        }
+        throw new RuntimeException("Repeated email or phoneNumber");
     }
 
     @Override
@@ -40,13 +38,14 @@ public class UserServiceImpl implements UserService {
         return StreamSupport.stream(userRepository.findAll().spliterator(),false).collect(Collectors.toList());
     }
 
-    private boolean validateNonRepeated(String email,String number){
+    private boolean isRepeated(String email,String number){
         List<User> users = getUsers();
         for (User x : users){
+            System.out.println("El que esta:"+x.getEmail());
             if (x.getPhoneNumber().equals(number) || x.getEmail().equals(email)){
-                return false;
+                return true;
             }
         }
-        return true;
+        return false;
     }
 }

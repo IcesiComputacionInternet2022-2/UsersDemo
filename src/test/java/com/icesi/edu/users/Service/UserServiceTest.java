@@ -53,6 +53,7 @@ public class UserServiceTest {
         User user1 = new User(uuid,email,phoneNumber,firstName,lastName);
 
         //Get User
+        userService.createUser(user1);
         User obtainedUser = userService.getUser(uuid);
         verify(userRepository,times(1)).findById(any()); //Save is being called
     }
@@ -76,11 +77,27 @@ public class UserServiceTest {
         //Create User
         User user1 = new User(uuid,email,phoneNumber,firstName,lastName);
         User user2 = new User(uuid2,email2,phoneNumber2,firstName2,lastName2);
-
+        userService.createUser(user1);
+        userService.createUser(user2);
         userService.getUsers();
-        verify(userRepository,times(1)).findAll();
-
-
+        verify(userRepository,times(3)).findAll(); //It's called 3 times because createUser calls getUsers
     }
+
+    @Test
+    public void testNonRepeatedEmailOrNumber(){
+        UUID uuid = UUID.randomUUID();
+        String email = "juandavid227@hotmail.com";
+        String phoneNumber = "+573166670887";
+        String firstName = "Juan";
+        String lastName = "Cruz";
+
+        User user1 = new User(uuid,email,phoneNumber,firstName,lastName);
+
+        //Create User
+        userService.createUser(user1);
+        userService.createUser(user1);
+        verify(userRepository,times(1)).save(any()); //Save is being called just one time
+    }
+
 
 }

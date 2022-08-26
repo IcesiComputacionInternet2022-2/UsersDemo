@@ -35,16 +35,6 @@ public class User {
 
     private String lastName;
 
-    private String date;
-
-    public User(UUID id,String email,String phoneNumber,String firstName,String lastName){
-        this.id = id;
-        this.email = email;
-        this.phoneNumber = phoneNumber;
-        this.firstName = firstName;
-        this.lastName = lastName;
-    }
-
 
     @PrePersist
     public void generateId(){
