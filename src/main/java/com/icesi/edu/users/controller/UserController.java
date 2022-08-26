@@ -51,21 +51,15 @@ public class UserController implements UserAPI {
     }
 
     private boolean isValidEmail(String email) {
-        if(email == null || email.matches(EMAIL_REGEX))
-            return true;
-        throw new RuntimeException();
+        return (email == null || email.matches(EMAIL_REGEX));
     }
 
     private boolean isValidPhoneNumber(String phoneNumber) {
-        if(phoneNumber == null || phoneNumber.matches(PHONE_NUMBER_REGEX))
-            return true;
-        throw new RuntimeException();
+        return (phoneNumber == null || phoneNumber.matches(PHONE_NUMBER_REGEX));
     }
 
     private boolean isNumberOrEmailPresent(String email, String phoneNumber) {
-        if((email != null && !email.isEmpty()) || (phoneNumber != null && !phoneNumber.isEmpty()))
-            return true;
-        throw new RuntimeException();
+        return (email != null && !email.isEmpty()) || (phoneNumber != null && !phoneNumber.isEmpty());
     }
 
     private boolean checkNameLength(String name) {
@@ -73,9 +67,7 @@ public class UserController implements UserAPI {
     }
 
     private boolean isValidName(String name) {
-        if(name.matches(NAME_REGEX))
-            return true;
-        throw new RuntimeException();
+        return (name != null && name.matches(NAME_REGEX));
     }
 
     @Override
