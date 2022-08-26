@@ -28,7 +28,7 @@ public class UserController implements UserAPI {
     public UserDTO createUser(UserDTO userDTO) {
         if (validUser(userDTO.getEmail(),userDTO.getPhoneNumber(),userDTO.getFirstName(),userDTO.getLastName()))
             return userMapper.fromUser(userService.createUser(userMapper.fromDTO(userDTO)));
-        return null;
+        throw new RuntimeException("Not a valid user");
     }
 
     public boolean validUser(String email,String phoneNumber,String name,String lastName){

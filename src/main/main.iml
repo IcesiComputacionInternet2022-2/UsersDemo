@@ -65,5 +65,6 @@
     </orderEntry>
     <orderEntry type="library" name="Maven: org.liquibase:liquibase-core:4.15.0" level="project" />
     <orderEntry type="module" module-name="users" />
+    <orderEntry type="library" name="Maven: org.hibernate:hibernate-core:5.6.10.Final" level="project" />
   </component>
 </module>
