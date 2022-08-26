@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.NaturalId;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.Entity;
@@ -22,6 +23,7 @@ import java.util.UUID;
 public class User {
 
     @Id
+    @NaturalId
     @Type(type="org.hibernate.type.UUIDCharType")
     private UUID id;
 
