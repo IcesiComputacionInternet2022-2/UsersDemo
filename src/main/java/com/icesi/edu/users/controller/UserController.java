@@ -18,8 +18,8 @@ public class UserController implements UserAPI {
     public final UserService userService;
     public final UserMapper userMapper;
 
-    private final String EMAIL_REGEX = "^[A-Za-z0-9]+@icesi\\.edu\\.co$";
-    private final String PHONE_NUMBER_REGEX = "^\\+57[0-9]{10}$";
+    private final String EMAIL_REGEX = "^$|[A-Za-z0-9]+@icesi\\.edu\\.co$";
+    private final String PHONE_NUMBER_REGEX = "^$|\\+57[0-9]{10}$";
     private final int MAX_FIELD_LENGTH = 120;
     private final String NAME_REGEX = "^[a-zA-Z]+$";
 
@@ -30,11 +30,20 @@ public class UserController implements UserAPI {
 
     @Override
     public UserDTO createUser(UserDTO userDTO) {
-        String email = userDTO.getEmail();
-        String phoneNumber = userDTO.getPhoneNumber();
-        String firstName = userDTO.getFirstName();
-        String lastName = userDTO.getLastName();
-        return userMapper.fromUser(userService.createUser(userMapper.fromDTO(userDTO)));
+        if(checkUserNull(userDTO))
+            throw new RuntimeException();
+        String email, phoneNumber, firstName, lastName;
+        email = userDTO.getEmail();
+        phoneNumber = userDTO.getPhoneNumber();
+        if(!isNumberOrEmailPresent(email, phoneNumber))
+            throw new RuntimeException();
+        firstName = userDTO.getFirstName();
+        lastName = userDTO.getLastName();
+        if(isValidEmail(email) && isValidPhoneNumber(phoneNumber) &&
+                isValidName(firstName) && isValidName(lastName) &&
+                checkNameLength(firstName) && checkNameLength(lastName))
+            return userMapper.fromUser(userService.createUser(userMapper.fromDTO(userDTO)));
+        throw new RuntimeException();
     }
 
     private boolean checkUserNull(UserDTO userDTO) {
@@ -42,13 +51,13 @@ public class UserController implements UserAPI {
     }
 
     private boolean isValidEmail(String email) {
-        if(email.matches(EMAIL_REGEX))
+        if(email == null || email.matches(EMAIL_REGEX))
             return true;
         throw new RuntimeException();
     }
 
     private boolean isValidPhoneNumber(String phoneNumber) {
-        if(phoneNumber.matches(PHONE_NUMBER_REGEX))
+        if(phoneNumber == null || phoneNumber.matches(PHONE_NUMBER_REGEX))
             return true;
         throw new RuntimeException();
     }
