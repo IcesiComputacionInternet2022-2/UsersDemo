@@ -25,10 +25,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User createUser(User userDTO) {
-        boolean isEmailRepeated = getUsers().stream().noneMatch(user -> user.getEmail().equals(userDTO.getEmail()));
-        boolean isPhoneRepeated = getUsers().stream().noneMatch(user -> user.getPhoneNumber().equals(userDTO.getPhoneNumber()));
+        boolean isEmailRepeated = getUsers().stream().anyMatch(user -> user.getEmail().equals(userDTO.getEmail()));
+        boolean isPhoneRepeated = getUsers().stream().anyMatch(user -> user.getPhoneNumber().equals(userDTO.getPhoneNumber()));
 
-        if (!isEmailRepeated && !isPhoneRepeated)
+        if (isEmailRepeated && isPhoneRepeated)
             throw new RuntimeException();
         else return userRepository.save(userDTO);
     }
