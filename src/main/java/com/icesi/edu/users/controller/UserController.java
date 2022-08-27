@@ -76,7 +76,22 @@ public class UserController implements UserAPI {
 
     @Override
     public List<UserDTO> getUsers() {
+        return usersWithHiddenId();
+    }
+
+    private List<UserDTO> mapUsersList() {
         return userService.getUsers().stream().map(userMapper::fromUser).collect(Collectors.toList());
+    }
+
+    private List<UserDTO> usersWithHiddenId() {
+        List<UserDTO> users = mapUsersList();
+        users.forEach(u -> {u.setHiddenId(hiddenId(u)); u.setId(null);});
+        return users;
+    }
+
+    private String hiddenId(UserDTO user) {
+        String currentId = String.valueOf(user.getId());
+        return "..." + currentId.substring(currentId.length() - 4);
     }
 
 }

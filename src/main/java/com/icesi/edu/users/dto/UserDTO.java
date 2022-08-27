@@ -14,7 +14,11 @@ import java.util.UUID;
 @NoArgsConstructor
 public class UserDTO {
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private UUID id;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private String hiddenId;
 
     private String email;
 
