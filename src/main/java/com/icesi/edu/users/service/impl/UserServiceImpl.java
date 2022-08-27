@@ -47,6 +47,7 @@ public class UserServiceImpl implements UserService {
                 .withIgnorePaths("id")
                 .withIgnorePaths("firstName")
                 .withIgnorePaths("lastName")
+                .withIgnoreCase()
                 .withIgnoreNullValues();
     }
 
