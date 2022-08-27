@@ -178,59 +178,112 @@ public class UserControllerTest {
         UserDTO userDTO = new UserDTO(null,null,"+573161234567","Juan","Perez",null);
 
         userController.createUser(userDTO);
+
+        //Pass, no exception is thrown
     }
 
     @Test
     public void testVerifyContactInfoPhoneNumberNull(){
+        UserDTO userDTO = new UserDTO(null,"example@icesi.edu.co",null,"Juan","Perez",null);
 
+        userController.createUser(userDTO);
 
+        //Pass, no exception is thrown
     }
 
     @Test
     public void testVerifyContactInfoBothPresent(){
+        UserDTO userDTO = new UserDTO(null,"example@icesi.edu.co","+573161234567","Juan","Perez",null);
 
-
+        userController.createUser(userDTO);
+        //Pass, no exception is thrown
     }
 
     @Test
     public void testVerifyEmailFormat(){
+        UserDTO userDTO = new UserDTO(null,"exa mple@ices@i.edu.co","+573161234567","Juan","Perez",null);
 
+        RuntimeException thrown =
+                assertThrows(RuntimeException.class, () -> {
+                    userController.createUser(userDTO);
+                }, "RuntimeException expected");
+
+        assertEquals(thrown.getMessage(),"Incorrect attributes format and/or values");
     }
 
     @Test
     public void testVerifyEmailDomain(){
+        UserDTO userDTO = new UserDTO(null,"example@univalle.edu.co","+573161234567","Juan","Perez",null);
 
+        RuntimeException thrown =
+                assertThrows(RuntimeException.class, () -> {
+                    userController.createUser(userDTO);
+                }, "RuntimeException expected");
+
+        assertEquals(thrown.getMessage(),"Incorrect attributes format and/or values");
 
     }
 
     @Test
     public void testVerifyEmailValidCharacters(){
+        UserDTO userDTO = new UserDTO(null,"ex#$%am ple@icesi.edu.co","+573161234567","Juan","Perez",null);
 
+        RuntimeException thrown =
+                assertThrows(RuntimeException.class, () -> {
+                    userController.createUser(userDTO);
+                }, "RuntimeException expected");
+
+        assertEquals(thrown.getMessage(),"Incorrect attributes format and/or values");
 
     }
 
     @Test
     public void testVerifyPhoneNumberLength(){
+        UserDTO userDTO = new UserDTO(null,"example@icesi.edu.co","+57316123","Juan","Perez",null);
 
+        RuntimeException thrown =
+                assertThrows(RuntimeException.class, () -> {
+                    userController.createUser(userDTO);
+                }, "RuntimeException expected");
 
+        assertEquals(thrown.getMessage(),"Incorrect attributes format and/or values");
     }
 
     @Test
     public void testVerifyPhoneNumberCountryCode(){
+        UserDTO userDTO = new UserDTO(null,"example@icesi.edu.co","+633161234567","Juan","Perez",null);
 
+        RuntimeException thrown =
+                assertThrows(RuntimeException.class, () -> {
+                    userController.createUser(userDTO);
+                }, "RuntimeException expected");
 
+        assertEquals(thrown.getMessage(),"Incorrect attributes format and/or values");
     }
 
     @Test
     public void testVerifyPhoneNumberValidCharacters(){
+        UserDTO userDTO = new UserDTO(null,"example@icesi.edu.co","+57316$%34567","Juan","Perez",null);
 
+        RuntimeException thrown =
+                assertThrows(RuntimeException.class, () -> {
+                    userController.createUser(userDTO);
+                }, "RuntimeException expected");
+
+        assertEquals(thrown.getMessage(),"Incorrect attributes format and/or values");
 
     }
 
     @Test
     public void testVerifyPhoneNumberSpaces(){
+        UserDTO userDTO = new UserDTO(null,"example@icesi.edu.co","+573161 34567","Juan","Perez",null);
 
+        RuntimeException thrown =
+                assertThrows(RuntimeException.class, () -> {
+                    userController.createUser(userDTO);
+                }, "RuntimeException expected");
 
+        assertEquals(thrown.getMessage(),"Incorrect attributes format and/or values");
     }
 
 
