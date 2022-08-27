@@ -25,11 +25,28 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User createUser(User userDTO) {
-        return userRepository.save(userDTO);
+        if(!existRepeatedPhoneNumberOrEmail(userDTO)){
+            return userRepository.save(userDTO);
+        }
+        throw new RuntimeException();
     }
 
     @Override
     public List<User> getUsers() {
         return StreamSupport.stream(userRepository.findAll().spliterator(),false).collect(Collectors.toList());
     }
+
+    private boolean existRepeatedPhoneNumberOrEmail(User newUserDTO) {
+        boolean repeatedValues = false;
+        List<User> users = getUsers();
+        for (User user: users) {
+            if(user.getPhoneNumber().equals(newUserDTO.getPhoneNumber()) || user.getEmail().equals(newUserDTO.getEmail())){
+                repeatedValues = true;
+                break;
+            }
+        }
+
+        return repeatedValues;
+    }
+
 }
