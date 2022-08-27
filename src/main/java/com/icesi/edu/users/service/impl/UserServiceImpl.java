@@ -27,7 +27,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public User createUser(User userDTO) {
         if(!isRepeated(userDTO.getEmail(),userDTO.getPhoneNumber())){
-            System.out.println(userDTO.getEmail());
             return userRepository.save(userDTO);
         }
         throw new RuntimeException("Repeated email or phoneNumber");
@@ -41,7 +40,6 @@ public class UserServiceImpl implements UserService {
     private boolean isRepeated(String email,String number){
         List<User> users = getUsers();
         for (User x : users){
-            System.out.println("El que esta:"+x.getEmail());
             if (x.getPhoneNumber().equals(number) || x.getEmail().equals(email)){
                 return true;
             }
