@@ -6,9 +6,7 @@ import com.icesi.edu.users.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -25,11 +23,21 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User createUser(User userDTO) {
+
+        List<User> users = getUsers();
+
+        // Avoid adding duplicated data
+        for(int i=0; i<users.size();i++){
+            if(users.get(i).getEmail().equals(userDTO.getEmail())||users.get(i).getPhoneNumber().equals(userDTO.getPhoneNumber())){
+                throw new RuntimeException("Duplicated data");
+            }
+        }
+
         return userRepository.save(userDTO);
     }
 
     @Override
     public List<User> getUsers() {
-        return StreamSupport.stream(userRepository.findAll().spliterator(),false).collect(Collectors.toList());
+        return   StreamSupport.stream(userRepository.findAll().spliterator(),false).collect(Collectors.toList());
     }
 }
