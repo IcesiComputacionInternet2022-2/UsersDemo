@@ -25,11 +25,25 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User createUser(User userDTO) {
-        return userRepository.save(userDTO);
+        emailOrPhoneNumber(userDTO);
+        stringNotToLong(userDTO.getFirstName());
+        stringNotToLong(userDTO.getLastName());
+
+            return userRepository.save(userDTO);
     }
 
     @Override
     public List<User> getUsers() {
         return StreamSupport.stream(userRepository.findAll().spliterator(),false).collect(Collectors.toList());
+    }
+
+    private void emailOrPhoneNumber(User userDTO) {
+        if(userDTO.getEmail()==null && userDTO.getPhoneNumber()==null){
+            throw new RuntimeException("El correo y el numero de telefono no pueden ser vacios por favor llene uno de los dos");
+        }
+    }
+    private void stringNotToLong(String s) {
+        if(s ==null || s.length()>120)
+            throw new RuntimeException("El Nombre y Apellido no pueden estar en blanco y maximo pueden tener 120 caracteres");
     }
 }
