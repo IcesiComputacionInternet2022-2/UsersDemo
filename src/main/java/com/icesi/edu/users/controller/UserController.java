@@ -7,6 +7,7 @@ import com.icesi.edu.users.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -25,7 +26,10 @@ public class UserController implements UserAPI {
 
     @Override
     public UserDTO getUser(UUID userId) {
-        return userMapper.fromUser(userService.getUser(userId));
+        UserDTO foundUser = userMapper.fromUser(userService.getUser(userId));
+        if(foundUser != null)
+            foundUser.setRequestDate(new Date());
+        return foundUser;
     }
 
     @Override
