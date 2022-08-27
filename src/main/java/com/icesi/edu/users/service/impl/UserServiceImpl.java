@@ -40,7 +40,7 @@ public class UserServiceImpl implements UserService {
         boolean repeatedValues = false;
         List<User> users = getUsers();
         for (User user: users) {
-            if(user.getPhoneNumber().equals(newUserDTO.getPhoneNumber()) || user.getEmail().equals(newUserDTO.getEmail())){
+            if(user.getPhoneNumber().equals(newUserDTO.getPhoneNumber()) || user.getEmail().equalsIgnoreCase(newUserDTO.getEmail())){
                 repeatedValues = true;
                 break;
             }
