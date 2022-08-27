@@ -27,11 +27,7 @@ public class UserController implements UserAPI {
 
     @Override
     public UserDTO createUser(UserDTO userDTO) {
-        verifyEmailDomain(userDTO.getEmail());
-        verifyPhoneNumberEspace(userDTO.getPhoneNumber());
-        verifyPhoneNumberValidLen(userDTO.getPhoneNumber());
-        verifyPhoneNumberOpener(userDTO.getPhoneNumber());
-
+        verifyInput(userDTO);
         return userMapper.fromUser(userService.createUser(userMapper.fromDTO(userDTO)));
     }
 
@@ -40,6 +36,12 @@ public class UserController implements UserAPI {
         return  userService.getUsers().stream().map(userMapper::fromUser).collect(Collectors.toList());
     }
 
+    private void verifyInput(UserDTO userDTO){
+        verifyEmailDomain(userDTO.getEmail());
+        verifyPhoneNumberEspace(userDTO.getPhoneNumber());
+        verifyPhoneNumberValidLen(userDTO.getPhoneNumber());
+        verifyPhoneNumberOpener(userDTO.getPhoneNumber());
+    }
     private void verifyEmailDomain(String s) {
         if(s==null || !s.matches("[A-Za-z0-9._%+-]+@icesi+\\.+edu+\\.+co"))
             throw new RuntimeException("El correo debe pertenecer al dominio @icesi.edu.co y no contener caracteres especiales");
