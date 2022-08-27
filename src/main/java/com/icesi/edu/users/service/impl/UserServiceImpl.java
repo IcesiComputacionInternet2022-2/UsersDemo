@@ -26,7 +26,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User createUser(User user) {
 
-        if(verifyRepeatedEmail(user)){
+        if(verifyRepeatedEmail(user) && verifyRepeatedPhoneNumber(user)){
             return userRepository.save(user);
         }
         else{
@@ -36,11 +36,29 @@ public class UserServiceImpl implements UserService {
 
     private boolean verifyRepeatedEmail(User user){
 
-        List<User> users = StreamSupport.stream(userRepository.findAll().spliterator(),false).collect(Collectors.toList());
+        if(user.getEmail() == null) return true;
+
+        List<User> users = getUsers();
 
         for(User registeredUser: users){
-            if(user.getEmail().toLowerCase().equals(registeredUser.getEmail().toLowerCase())
-            || user.getPhoneNumber().equals(registeredUser.getPhoneNumber())){
+
+            if(user.getEmail().toLowerCase().equals(registeredUser.getEmail().toLowerCase())){
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private boolean verifyRepeatedPhoneNumber(User user){
+
+        if(user.getPhoneNumber() == null) return true;
+
+        List<User> users = getUsers();
+
+        for(User registeredUser: users){
+
+            if(user.getPhoneNumber().equals(registeredUser.getPhoneNumber())){
                 return false;
             }
         }

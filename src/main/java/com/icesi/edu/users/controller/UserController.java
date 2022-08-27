@@ -83,6 +83,6 @@ public class UserController implements UserAPI {
 
         String phoneNumber = userDTO.getPhoneNumber();
         //String matcher also checks for spaces
-        return phoneNumber.length() == 13 && phoneNumber.charAt(0) == '+' && phoneNumber.substring(1-13).matches("^[0-9]*$");
+        return phoneNumber.length() == 13 && phoneNumber.charAt(0) == '+' && phoneNumber.substring(1,3).equals("57") && phoneNumber.substring(1,13).matches("^[0-9]*$");
     }
 }
