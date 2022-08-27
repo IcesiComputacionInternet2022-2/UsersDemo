@@ -2,6 +2,7 @@ package com.icesi.edu.users.controller;
 
 import com.icesi.edu.users.api.UserAPI;
 import com.icesi.edu.users.dto.UserDTO;
+import com.icesi.edu.users.dto.UserDTORequest;
 import com.icesi.edu.users.mapper.UserMapper;
 import com.icesi.edu.users.service.UserService;
 import lombok.AllArgsConstructor;
@@ -20,8 +21,8 @@ public class UserController implements UserAPI {
     public final UserMapper userMapper;
 
     @Override
-    public UserDTO getUser(UUID userId) {
-        return userMapper.fromUser(userService.getUser(userId));
+    public UserDTORequest getUser(UUID userId) {
+        return userMapper.fromUserToDTORequest(userService.getUser(userId));
     }
 
     @Override
@@ -69,8 +70,6 @@ public class UserController implements UserAPI {
 
     private boolean validateUserPhoneNumber(UserDTO userDTO) {
         if(validateUserPhoneNotNull(userDTO.getPhoneNumber())){
-            System.out.println(validateUserPhoneNumberExtension(userDTO));
-            System.out.println(validateUserPhoneNumberContent(userDTO));
             return validateUserPhoneNumberExtension(userDTO) && validateUserPhoneNumberContent(userDTO);
         }
         return false;

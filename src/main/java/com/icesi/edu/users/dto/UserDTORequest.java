@@ -11,7 +11,7 @@ import java.util.UUID;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserDTO {
+public class UserDTORequest {
 
     private UUID id;
 
@@ -22,5 +22,7 @@ public class UserDTO {
     private String firstName;
 
     private String lastName;
+
+    private String requestDate = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss").format(LocalDateTime.now());
 
 }
