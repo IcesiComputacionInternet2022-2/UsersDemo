@@ -27,12 +27,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User createUser(User userDTO) {
+        if(!existsUser(userDTO))
+            return userRepository.save(userDTO);
+        throw new RuntimeException();
+    }
+
+    private boolean existsUser(User userDTO) {
         User paramsUser = createUserWithParams(userDTO.getEmail(), userDTO.getPhoneNumber());
         ExampleMatcher matcher = createMatcher();
         List<User> users = fillMatchedUsers(paramsUser, matcher);
-        if(users.isEmpty())
-            return userRepository.save(userDTO);
-        throw new RuntimeException();
+        return !users.isEmpty();
     }
 
     private User createUserWithParams(String email, String phoneNumber) {
