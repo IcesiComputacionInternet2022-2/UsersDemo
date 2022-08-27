@@ -1,12 +1,16 @@
 package com.icesi.edu.users.service.impl;
 
+import com.icesi.edu.users.dto.UserDTO;
 import com.icesi.edu.users.model.User;
 import com.icesi.edu.users.repository.UserRepository;
 import com.icesi.edu.users.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -20,15 +24,17 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getUser(UUID userId) {
-        return userRepository.findById(userId).orElse(null);
+        User userCalled = userRepository.findById(userId).orElse(null);
+        this.setDate(userCalled);
+        return userCalled;
     }
 
     @Override
     public User createUser(User userDTO) {
         emailOrPhoneNumber(userDTO);
+        uniquePhoneNumber(userDTO);
         stringNotToLong(userDTO.getFirstName());
         stringNotToLong(userDTO.getLastName());
-
             return userRepository.save(userDTO);
     }
 
@@ -45,5 +51,19 @@ public class UserServiceImpl implements UserService {
     private void stringNotToLong(String s) {
         if(s ==null || s.length()>120)
             throw new RuntimeException("El Nombre y Apellido no pueden estar en blanco y maximo pueden tener 120 caracteres");
+    }
+
+    private void setDate(User userDTO) {
+        Date date = new Date();
+        userDTO.setDate(date);
+    }
+
+    private void uniquePhoneNumber(User userDTO) {
+        List<User> x = this.getUsers();
+        for(User y: x) {
+            if (y.getPhoneNumber() == userDTO.getPhoneNumber()) {
+                throw new RuntimeException("El numero de telefono ya esta registrado para otro usuario en la base de datos");
+            }
+        }
     }
 }

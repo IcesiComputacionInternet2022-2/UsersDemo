@@ -37,15 +37,13 @@ public class UserController implements UserAPI {
 
     @Override
     public List<UserDTO> getUsers() {
-        return userService.getUsers().stream().map(userMapper::fromUser).collect(Collectors.toList());
+        return  userService.getUsers().stream().map(userMapper::fromUser).collect(Collectors.toList());
     }
 
     private void verifyEmailDomain(String s) {
         if(s==null || !s.matches("[A-Za-z0-9._%+-]+@icesi+\\.+edu+\\.+co"))
             throw new RuntimeException("El correo debe pertenecer al dominio @icesi.edu.co y no contener caracteres especiales");
-
     }
-
 
     private void verifyPhoneNumberOpener(String ps) {
         if (ps!=null && ps.matches("^[+57]+[0-9]"))
