@@ -55,9 +55,6 @@ public class UserController implements UserAPI {
     public boolean validateEmail(String email){
         return(emailDomain(email));
     }
-    public boolean emailNullEmpty(String email){
-        return ( email == null);
-    }
 
     public boolean emailDomain(String email){
         boolean domain = false;
@@ -96,9 +93,7 @@ public class UserController implements UserAPI {
     public boolean phoneFormat(String phone){
         return (phone.replace("+","").matches("[0-9]+"));
     }
-    public boolean phoneNullEmpty(String phone){
-        return(!phone.isEmpty() && !phone.equals(" ") );
-    }
+
     public boolean firstNameValidation(String firstName){
         return (firstNameNullEmpty(firstName) && firstNamelength(firstName) && firstNameCharacters(firstName));
     }

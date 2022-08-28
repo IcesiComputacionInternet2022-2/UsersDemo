@@ -10,7 +10,7 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.*;
 
 public class UserControllerTest {
     private UserController userController;
@@ -137,6 +137,16 @@ public class UserControllerTest {
         String lastName = "rodriguez.";
         newUser = new UserDTO(UUID.randomUUID(), email, phone, firstName, lastName);
         assertTrue(haveException());
+    }
+    @Test
+    public void acceptGetUsersOneTime(){
+        userController.getUsers();
+        verify(userService, times(1)).getUsers();
+    }
+    @Test
+    public void acceptGetUserOneTime(){
+        userController.getUser(any());
+        verify(userService, times(1)).getUsers();
     }
 
 }
