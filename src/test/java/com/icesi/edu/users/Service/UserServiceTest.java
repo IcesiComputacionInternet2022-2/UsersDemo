@@ -100,7 +100,7 @@ public class UserServiceTest {
         User createdUser =userService.createUser(user1);
         users.add(createdUser);
         when(userService.getUsers()).thenReturn(users);
-        try{  //have to use "try catch" because if i don't test doesn't run.
+        try{  //have to use "try catch" because if I don't, test doesn't run.
             userService.createUser(user1);
         }catch (Exception e){
             //System.out.println("Entre"); Fuerza bruta para ver si entraba (si lo hace jaja)
