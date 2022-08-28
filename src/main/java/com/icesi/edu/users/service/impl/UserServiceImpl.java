@@ -5,8 +5,6 @@ import com.icesi.edu.users.repository.UserRepository;
 import com.icesi.edu.users.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -24,12 +22,21 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User createUser(User userDTO) {
-        return userRepository.save(userDTO);
+    public User createUser(User user) {
+        if (validateUser(user.getEmail(), user.getPhoneNumber()))
+            return userRepository.save(user);
+        throw new RuntimeException();
     }
 
     @Override
     public List<User> getUsers() {
         return StreamSupport.stream(userRepository.findAll().spliterator(),false).collect(Collectors.toList());
+    }
+
+    private boolean validateUser(String email, String phoneNumber) {
+        for (User user : getUsers())
+            if (user.getEmail().equals(email) || user.getPhoneNumber().equals(phoneNumber))
+                return false;
+        return true;
     }
 }

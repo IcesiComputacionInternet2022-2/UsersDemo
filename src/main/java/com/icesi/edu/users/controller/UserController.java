@@ -6,7 +6,6 @@ import com.icesi.edu.users.mapper.UserMapper;
 import com.icesi.edu.users.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.RestController;
-
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -37,18 +36,23 @@ public class UserController implements UserAPI {
     }
 
     private boolean validateUser(UserDTO userDTO) {
-        return validateEmail(userDTO.getEmail()) && validatePhoneNumber(userDTO.getEmail()) && (!userDTO.getEmail().isEmpty() || !userDTO.getPhoneNumber().isEmpty() && validateFirstLastNames(userDTO.getFirstName(), userDTO.getLastName()));
+        if (userDTO.getEmail().isEmpty() && userDTO.getPhoneNumber().isEmpty()) {
+            return false;
+        }
+        boolean validateEmail = userDTO.getEmail().isEmpty() || validateEmail(userDTO.getEmail());
+        boolean validatePhoneNumber = userDTO.getPhoneNumber().isEmpty() || validatePhoneNumber(userDTO.getPhoneNumber());
+        return validateEmail && validatePhoneNumber && validateNames(userDTO.getFirstName(), userDTO.getLastName());
     }
 
     private boolean validateEmail(String userEmail) {
-        return userEmail.matches("\\w+@icesi.edu.co$");
+        return userEmail.matches("\\w+@icesi\\.edu\\.co$");
     }
 
     private boolean validatePhoneNumber(String userPhoneNumber) {
         return userPhoneNumber.matches("^\\+57\\d{10}");
     }
 
-    private boolean validateFirstLastNames(String firstName, String lastName) {
+    private boolean validateNames(String firstName, String lastName) {
         return firstName.matches("[a-zA-Z]{0,120}") && lastName.matches("[a-zA-Z]{0,120}");
     }
 }
