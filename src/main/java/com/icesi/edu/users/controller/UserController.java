@@ -42,24 +42,27 @@ public class UserController implements UserAPI {
     /* Validations */
 
     private boolean validDomain(String email) {
-        String domain = "@icesi.edu.co";
-        return email.toLowerCase().contains(domain);
+        String domain = "^.*(@icesi.edu.co)$";
+        return email != null && email.toLowerCase().matches(domain);
     }
 
     private boolean validEmail(String email) {
-        int atCount = email.length() - email.replaceAll("@", "").length();
-        int dotCount = email.length() - email.replaceAll("\\.", "").length();
-        String pattern = "[^a-zA-z0-9\\-_]";
+        if (email != null) {
+            int atCount = email.length() - email.replaceAll("@", "").length();
+            int dotCount = email.length() - email.replaceAll("\\.", "").length();
+            String pattern = "[^a-zA-z0-9\\-_]";
 
-        return !email.matches(pattern) && atCount == 1 && dotCount == 2;
+            return !email.matches(pattern) && atCount == 1 && dotCount == 2;
+        }
+        return false;
     }
 
     private boolean validCountryCode(String phone) {
-        return phone.substring(0, 3).equals("+57");
+        return phone != null && phone.substring(0, 3).equals("+57");
     }
 
     private boolean validCPhone(String phone) {
-        return phone.length() == 13 && !phone.matches("[^0-9+]");
+        return phone != null && phone.length() == 13 && !phone.matches("[^0-9+]");
     }
 
     private boolean emailOrPhone(String phone, String email) {
@@ -74,7 +77,7 @@ public class UserController implements UserAPI {
     }
 
     private boolean validNameFormat(String name, String lastName) {
-        String pattern = "[^a-zA-Z0-9]";
-        return !name.matches(pattern) && !lastName.matches(pattern);
+        String pattern = "[a-zA-Z]+";
+        return name.matches(pattern) && lastName.matches(pattern);
     }
 }
