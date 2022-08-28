@@ -27,10 +27,12 @@ public class UserController implements UserAPI {
     @Override
     public UserDTO createUser(UserDTO userDTO) {
         String[] email=userDTO.getEmail().split("@");
-        if(validateDomain(userDTO.getEmail())
+        if(!(validateDomain(userDTO.getEmail())
                 &&validateSize(userDTO.getEmail())
                 &&validateEmail(email[0])
-               ){
+                &&validateCountryCode(userDTO.getPhoneNumber())
+                &&validateName(userDTO.getFirstName(),userDTO.getLastName()))){
+            throw new RuntimeException("Invalid data");
         }
         return userMapper.fromUser(userService.createUser(userMapper.fromDTO(userDTO)));
     }
