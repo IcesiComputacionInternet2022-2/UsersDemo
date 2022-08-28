@@ -15,13 +15,12 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class UserController implements UserAPI {
 
-
     public final UserService userService;
     public final UserMapper userMapper;
 
     @Override
     public UserDTO getUser(UUID userId) {
-        return userMapper.fromUser(userService.getUser(userId));
+        return userMapper.fromUserToTime(userService.getUser(userId));
     }
 
     @Override
@@ -30,27 +29,25 @@ public class UserController implements UserAPI {
         String phone = userDTO.getPhoneNumber();
         String firstName = userDTO.getFirstName();
         String lastName = userDTO.getLastName();
-        userDTO.setId(UUID.randomUUID());
+
         switch (verifyOnlyCase(email, phone)) {
             case 0:
-                System.out.println("Case " + verifyOnlyCase(email, phone));
                 if (verifyEmail(email) && verifyNames(firstName, lastName)) {
-
-                } else { throw new RuntimeException(); }
+                    return userMapper.fromUser(userService.createUser(userMapper.fromDTO(userDTO)));
+                }
                 break;
             case 1:
                 if (verifyPhone(phone) && verifyNames(firstName, lastName)) {
-
-                } else { throw new RuntimeException(); }
+                    return userMapper.fromUser(userService.createUser(userMapper.fromDTO(userDTO)));
+                }
                 break;
             case 2:
                 if (verifyEmail(email) && verifyPhone(phone) && verifyNames(firstName, lastName)) {
-
-                } else { throw new RuntimeException(); }
+                    return userMapper.fromUser(userService.createUser(userMapper.fromDTO(userDTO)));
+                }
                 break;
         }
-
-        return userMapper.fromUser(userService.createUser(userMapper.fromDTO(userDTO)));
+        throw new RuntimeException("Invalid data to submit");
     }
 
     private int verifyOnlyCase(String email, String phone) {
@@ -67,7 +64,7 @@ public class UserController implements UserAPI {
     }
 
     private boolean verifyPhone(String phone) {
-        return phone.length() == 13 && phone.substring(0,3).equals("+57") && phone.substring(3,13).matches("[0-9]+");
+        return (phone.length() == 13 || phone.length() == 0) && phone.substring(0,3).equals("+57") && phone.substring(3,13).matches("[0-9]+");
     }
 
     private boolean verifyNames(String firstName, String lastName) {
