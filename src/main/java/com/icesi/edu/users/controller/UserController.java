@@ -26,7 +26,7 @@ public class UserController implements UserAPI {
     }
 
     @Override
-    public UserDTO createUser(UserDTO userDTO) throws Exception {
+    public UserDTO createUser(UserDTO userDTO) throws RuntimeException {
         boolean isValidUser = validateUser(userDTO);
         if(isValidUser){
             return userMapper.fromUser(userService.createUser(userMapper.fromDTO(userDTO)));
@@ -102,10 +102,7 @@ public class UserController implements UserAPI {
     }
 
     private boolean validateUserPhoneNumber(UserDTO userDTO) {
-        if(validateUserPhoneNotNull(userDTO.getPhoneNumber())){
-            return validateUserPhoneNumberExtension(userDTO) && validateUserPhoneNumberContent(userDTO);
-        }
-        return false;
+        return validateUserPhoneNumberExtension(userDTO) && validateUserPhoneNumberContent(userDTO);
     }
 
     private boolean validateUserPhoneNumberContent(UserDTO userDTO) {
@@ -118,11 +115,9 @@ public class UserController implements UserAPI {
     }
 
     private boolean validateUserEmail(UserDTO userDTO){
-        if(validateUserEmailNotNull(userDTO.getEmail())){
-            String[] email = userDTO.getEmail().split("@");
-            if(email.length == 2){
-                return  validateUserEmailDomain(email[1]) && validateUserEmailSpecialChars(email[0]);
-            }
+        String[] email = userDTO.getEmail().split("@");
+        if(email.length == 2){
+            return  validateUserEmailDomain(email[1]) && validateUserEmailSpecialChars(email[0]);
         }
         return false;
     }
