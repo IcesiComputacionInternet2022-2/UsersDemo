@@ -6,7 +6,6 @@ import com.icesi.edu.users.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -25,6 +24,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User createUser(User userDTO) {
+        validateRepeatedEmailOrPhoneNumber(userDTO.getEmail(), userDTO.getPhoneNumber());
         return userRepository.save(userDTO);
     }
 
@@ -39,14 +39,17 @@ public class UserServiceImpl implements UserService {
     }
 
 
-    private void validateRepeatedEmail(String email){
+    private void validateRepeatedEmailOrPhoneNumber(String email, String phoneNumber) {
 
         List<User> listUsers = StreamSupport.stream(userRepository.findAll().spliterator(),false).collect(Collectors.toList());
 
-        for (User user : listUsers) {
-            if(user.getEmail().equals(email)){
+        listUsers.forEach(user-> {
+            if(user.getEmail()!=null&&user.getEmail().equals(email)){
                 throw new RuntimeException("The email is already in use");
             }
-        }
+            if(user.getPhoneNumber()!=null&&user.getPhoneNumber().equals(phoneNumber)){
+                throw new RuntimeException("The phone number is already in use");
+            }
+        });
     }
 }
