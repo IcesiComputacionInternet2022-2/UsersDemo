@@ -32,4 +32,8 @@ public class UserServiceImpl implements UserService {
     public List<User> getUsers() {
         return StreamSupport.stream(userRepository.findAll().spliterator(),false).collect(Collectors.toList());
     }
+
+    private void notExistRepeatEmail(){
+        System.out.println(userRepository.findAll());
+    }
 }

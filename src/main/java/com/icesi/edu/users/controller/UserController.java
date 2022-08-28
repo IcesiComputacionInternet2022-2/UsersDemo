@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 public class UserController implements UserAPI {
 
     private final int MAX_STRING_LENGTH = 120;
+    private final String EMAIL_DOMAIN = "@icesi.edu.co";
     public final UserService userService;
     public final UserMapper userMapper;
 
@@ -26,8 +27,19 @@ public class UserController implements UserAPI {
 
     @Override
     public UserDTO createUser(UserDTO userDTO) {
-        return userMapper.fromUser(userService.createUser(userMapper.fromDTO(userDTO)));
-    }
+        if(userDTO.getFirstName() != null && userDTO.getLastName() != null){
+            verifyStringLength(userDTO.getFirstName());
+            verifyStringLength(userDTO.getLastName());
+            verifyName(userDTO.getFirstName());
+            verifyName(userDTO.getLastName());
+            existNumberOrEmail(userDTO.getPhoneNumber(), userDTO.getEmail());
+            checkEmailDomain(userDTO.getEmail());
+            validEmail(userDTO.getEmail());
+            checkNumber(userDTO.getPhoneNumber());
+            return userMapper.fromUser(userService.createUser(userMapper.fromDTO(userDTO)));
+        }//End if
+        throw new RuntimeException();
+    }//End UserDTO
 
     @Override
     public List<UserDTO> getUsers() {
@@ -39,12 +51,15 @@ public class UserController implements UserAPI {
             throw new RuntimeException();
     }//End checkEmailDomain
 
-    private void isEmail(final String userEmail){
-        if(userEmail != null && !userEmail.split("@")[0].matches(".*A-Za-z0-9"))
+    private void validEmail(final String userEmail){
+        String mail = (userEmail != null)
+                ?userEmail.substring(0,userEmail.length()-EMAIL_DOMAIN.length())
+                :null;
+        if(mail != null && mail.matches("[^a-zA-Z0-9]"))
             throw new RuntimeException();
     }//End isEmail
 
-    private void checkNumberRegion(final String userPhoneNumber){
+    private void checkNumber(final String userPhoneNumber){
         if(userPhoneNumber != null && userPhoneNumber.matches("^\\+57[0-9]{10}$"))
             throw new RuntimeException();
     }//End checkNumberRegion
@@ -60,5 +75,9 @@ public class UserController implements UserAPI {
             throw new RuntimeException();
     }//End verifyStringLength
 
+    private void verifyName(final String name){
+        if(name.matches("[^a-zA-Z]"))
+            throw new RuntimeException();
+    }//End verifyName
 
 }//End UserController
