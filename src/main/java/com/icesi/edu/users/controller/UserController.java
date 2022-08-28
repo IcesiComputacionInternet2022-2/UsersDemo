@@ -46,7 +46,7 @@ public class UserController implements UserAPI {
     }
 
     private boolean validateEmailSpecialCharacters(UserDTO userDTO) {
-        return userDTO.getEmail().substring(0, userDTO.getEmail().length() - domain.length()).matches("[a-zA-Z0-9]+");
+        return userDTO.getEmail() == null || userDTO.getEmail().substring(0, userDTO.getEmail().length() - domain.length()).matches("[a-zA-Z0-9]+");
     }
 
     private boolean validatePhoneNumberExt(UserDTO userDTO) {
