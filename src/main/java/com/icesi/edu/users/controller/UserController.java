@@ -41,11 +41,38 @@ public class UserController implements UserAPI {
     }
 
     private boolean validateUser(UserDTO userDTO){
-        return validateUserNonNulls(userDTO) && validateUserEmail(userDTO) && validateUserPhoneNumber(userDTO) && validateUserNames(userDTO);
+
+        UserValidations fieldValidation = validateUserNulls(userDTO);
+        switch (fieldValidation){
+            case NOT_NULLS:
+                return validateUserEmail(userDTO) && validateUserPhoneNumber(userDTO) && validateUserNames(userDTO);
+
+            case EMAIL_NULL:
+                return validateUserPhoneNumber(userDTO) && validateUserNames(userDTO);
+
+            case PHONE_NULL:
+                return validateUserEmail(userDTO) & validateUserNames(userDTO);
+
+            default:
+                return false;
+        }
     }
 
-    private boolean validateUserNonNulls(UserDTO userDTO){
-        return validateUserEmailNotNull(userDTO.getEmail()) && validateUserPhoneNotNull(userDTO.getPhoneNumber());
+    private UserValidations validateUserNulls(UserDTO userDTO){
+        UserValidations fieldValidation = UserValidations.EMAIL_PHONE_NULL;
+        if(validateUserEmailNotNull(userDTO.getEmail()) && validateUserPhoneNotNull(userDTO.getPhoneNumber())){
+            fieldValidation = UserValidations.NOT_NULLS;
+        }
+
+        if(!validateUserEmailNotNull(userDTO.getEmail()) && validateUserPhoneNotNull(userDTO.getPhoneNumber())){
+            fieldValidation = UserValidations.EMAIL_NULL;
+        }
+
+        if(validateUserEmailNotNull(userDTO.getEmail()) && validateUserPhoneNotNull(userDTO.getPhoneNumber())){
+            fieldValidation = UserValidations.PHONE_NULL;
+        }
+
+        return fieldValidation;
     }
 
     private boolean validateUserPhoneNotNull(String phoneNumber) {
