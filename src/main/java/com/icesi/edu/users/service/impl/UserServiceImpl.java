@@ -6,7 +6,6 @@ import com.icesi.edu.users.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -25,7 +24,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User createUser(User userDTO) {
-        if (getUsers().stream().noneMatch(user -> user.getEmail().equals(userDTO.getEmail()) && user.getPhoneNumber().equals(userDTO.getPhoneNumber()))) {
+        if (getUsers().stream().noneMatch(user -> user.getEmail().equals(userDTO.getEmail()) || user.getPhoneNumber().equals(userDTO.getPhoneNumber()))) {
             return userRepository.save(userDTO);
         }
         throw new RuntimeException();
