@@ -10,7 +10,7 @@ import java.util.UUID;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserDTO {
+public class UserDTOConsult {
 
     private UUID id;
 
@@ -21,4 +21,6 @@ public class UserDTO {
     private String firstName;
 
     private String lastName;
+
+    private LocalDate lastCall;
 }
