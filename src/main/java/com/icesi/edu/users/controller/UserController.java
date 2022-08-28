@@ -29,13 +29,13 @@ public class UserController implements UserAPI {
 
         if (userDTO.getEmail() != null){
 
-            if (validateEmail(userDTO.getEmail()) == true){
+            if (validateEmail(userDTO.getEmail())){
 
                 if (userDTO.getPhoneNumber() != null){
 
-                    if (validatePhoneNumber(userDTO.getPhoneNumber()) == true){
+                    if (validatePhoneNumber(userDTO.getPhoneNumber())){
 
-                        if (validateName(userDTO.getFirstName(), userDTO.getLastName()) == true){
+                        if (validateName(userDTO.getFirstName(), userDTO.getLastName())){
 
                             return userMapper.fromUser(userService.createUser(userMapper.fromDTO(userDTO)));
                         }else {
@@ -48,7 +48,7 @@ public class UserController implements UserAPI {
                     }
                 }else {
 
-                    if (validateName(userDTO.getFirstName(), userDTO.getLastName()) == true){
+                    if (validateName(userDTO.getFirstName(), userDTO.getLastName())){
 
                         return userMapper.fromUser(userService.createUser(userMapper.fromDTO(userDTO)));
                     }else{
@@ -62,13 +62,13 @@ public class UserController implements UserAPI {
             }
         } else if (userDTO.getPhoneNumber() != null) {
 
-            if (validatePhoneNumber(userDTO.getPhoneNumber())==true){
+            if (validatePhoneNumber(userDTO.getPhoneNumber())){
 
                 if (userDTO.getEmail() != null){
 
-                    if (validateEmail(userDTO.getEmail())== true){
+                    if (validateEmail(userDTO.getEmail())){
 
-                        if (validateName(userDTO.getFirstName(), userDTO.getLastName()) == true){
+                        if (validateName(userDTO.getFirstName(), userDTO.getLastName())){
 
                             return userMapper.fromUser(userService.createUser(userMapper.fromDTO(userDTO)));
                         }else{
@@ -81,7 +81,7 @@ public class UserController implements UserAPI {
                     }
                 }else{
 
-                    if (validateName(userDTO.getFirstName(), userDTO.getLastName()) == true){
+                    if (validateName(userDTO.getFirstName(), userDTO.getLastName())){
 
                         return userMapper.fromUser(userService.createUser(userMapper.fromDTO(userDTO)));
                     }else {
@@ -147,6 +147,38 @@ public class UserController implements UserAPI {
         if (fullName.length() < 120){
 
             if (fullName.matches("/^[A-Za-z\\s]+$/g"));{
+
+                validated = true;
+            }
+        }
+
+        return validated;
+    }
+
+    public boolean validateRepeatEmail(String s){
+
+        boolean validated = false;
+
+        for (int i = 0; i <  userService.getUsers().size() ;i++){
+
+            if (s.equals(userService.getUsers().get(i).getEmail())){
+
+
+                validated = true;
+            }
+        }
+
+        return validated;
+    }
+
+    public boolean validateRepeatPNumber(String s){
+
+        boolean validated = false;
+
+        for (int i = 0; i <  userService.getUsers().size() ;i++){
+
+            if (s.equals(userService.getUsers().get(i).getPhoneNumber())){
+
 
                 validated = true;
             }

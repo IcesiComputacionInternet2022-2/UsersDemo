@@ -28,6 +28,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User createUser(User userDTO) {
+
+        List<User> users = getUsers();
+
+        for(int i=0; i<users.size();i++){
+            if(users.get(i).getEmail().equals(userDTO.getEmail())||users.get(i).getPhoneNumber().equals(userDTO.getPhoneNumber())){
+                throw new RuntimeException("Email or Phone number exist");
+            }
+        }
         return userRepository.save(userDTO);
     }
 
