@@ -71,7 +71,7 @@ public class UserControllerTest {
     public void testSetTheDateWhenUsingGetUser(){
         setupScene1();
         when(userMapper.fromUser(any())).thenReturn(userDTO);
-        UserDTO obtainedUserDto = userController.createUser(userDTO);
+        UserDTO obtainedUserDto = userController.getUser(uuid);
         assertEquals(obtainedUserDto.getDate(), LocalDate.now().toString());
     }
 

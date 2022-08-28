@@ -23,14 +23,15 @@ public class UserController implements UserAPI {
 
     @Override
     public UserDTO getUser(UUID userId) {
-        return userMapper.fromUser(userService.getUser(userId));
+        UserDTO user = userMapper.fromUser(userService.getUser(userId));
+        user.setDate(LocalDate.now().toString());
+        return user;
     }
 
     @Override
     public UserDTO createUser(UserDTO userDTO) {
         if (validUser(userDTO.getEmail(),userDTO.getPhoneNumber(),userDTO.getFirstName(),userDTO.getLastName())){
             UserDTO usr =  userMapper.fromUser(userService.createUser(userMapper.fromDTO(userDTO)));
-            usr.setDate(LocalDate.now().toString());
             return usr;
         }
 
