@@ -36,17 +36,31 @@ public class UserServiceImpl implements UserService {
         return StreamSupport.stream(userRepository.findAll().spliterator(),false).collect(Collectors.toList());
     }
 
-    private boolean existRepeatedPhoneNumberOrEmail(User newUserDTO) {
+    private boolean existRepeatedPhoneNumberOrEmail(User newUser) {
         boolean repeatedValues = false;
         List<User> users = getUsers();
         for (User user: users) {
-            if(user.getPhoneNumber().equals(newUserDTO.getPhoneNumber()) || user.getEmail().equalsIgnoreCase(newUserDTO.getEmail())){
+
+            if(validateNotNullEmail(newUser) && newUser.getEmail().equalsIgnoreCase(user.getEmail())){
+                repeatedValues = true;
+                break;
+            }
+
+            if(validateNotNullPhoneNumber(newUser) && newUser.getPhoneNumber().equalsIgnoreCase(user.getPhoneNumber())){
                 repeatedValues = true;
                 break;
             }
         }
 
         return repeatedValues;
+    }
+
+    private boolean validateNotNullEmail(User user){
+        return user.getEmail() != null;
+    }
+
+    private boolean validateNotNullPhoneNumber(User user){
+        return user.getPhoneNumber() != null;
     }
 
 }
