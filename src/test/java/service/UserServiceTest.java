@@ -8,13 +8,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static net.bytebuddy.matcher.ElementMatchers.any;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 
@@ -37,6 +38,14 @@ public class UserServiceTest {
         userService.createUser(user);
         userService.getUser(id);
         verify(userRepository, times(1)).save(ArgumentMatchers.any());
+    }
+
+    @Test
+    public void getUserLastTimeSearchedTest(){
+        exampleUser();
+        userService.createUser(user);
+        when(userRepository.findById(ArgumentMatchers.any())).thenReturn(Optional.ofNullable(user));
+        assertEquals(userService.getUser(id).getLastTimeSearched(), LocalDate.now());
     }
 
     public void exampleUser(){
