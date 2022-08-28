@@ -1,5 +1,6 @@
 package com.icesi.edu.users.service.impl;
 
+import com.icesi.edu.users.dto.UserDTO;
 import com.icesi.edu.users.model.User;
 import com.icesi.edu.users.repository.UserRepository;
 import com.icesi.edu.users.service.UserService;
@@ -25,7 +26,42 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User createUser(User userDTO) {
-        return userRepository.save(userDTO);
+        if (!validateRepeatedPhone(userDTO.getPhoneNumber()) && !validateRepeatedEmail(userDTO.getEmail())) {
+            return userRepository.save(userDTO);
+        }else{
+            throw new RuntimeException("Repeated Phone Number or Email");
+        }
+    }
+
+    private boolean validateRepeatedPhone(String phoneNumber) {
+        boolean result = false;
+        List<User> users = getUsers();
+
+        if (users.size() > 0){
+            for(User user : users){
+                if(user.getPhoneNumber().equals(phoneNumber)){
+                    result = true;
+                    break;
+                }
+            }
+        }
+        return result;
+    }
+
+    private boolean validateRepeatedEmail(String email) {
+        boolean result = false;
+        List<User> users = getUsers();
+
+        if (users.size() > 0) {
+            for (User user : users) {
+                if (user.getEmail().equalsIgnoreCase(email)) {
+                    result = true;
+                    break;
+                }
+            }
+        }
+
+        return result;
     }
 
     @Override

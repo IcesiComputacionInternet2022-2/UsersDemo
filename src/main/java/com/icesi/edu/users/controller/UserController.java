@@ -28,31 +28,50 @@ public class UserController implements UserAPI {
 
     @Override
     public UserDTO createUser(UserDTO userDTO) {
-        if (validateEmail(userDTO.getEmail()) && validatePhoneNumber(userDTO.getPhoneNumber())) {
+        if(validateEmailPhoneNull(userDTO) && validateEmail(userDTO.getEmail()) && validatePhoneNumber(userDTO.getPhoneNumber()) && validateFirstName(userDTO.getFirstName()) && ValidateLastName(userDTO.getLastName())){
             return userMapper.fromUser(userService.createUser(userMapper.fromDTO(userDTO)));
         }else{
             return null;
         }
     }
 
-    private boolean validatePhoneNumber(String phoneNumber) {
-        /*Pattern pattern = Pattern .compile("((\\+[57]{3,4}|0[57]{4}|00[57]{3})\\-?)?\\d{10,20}");
-
-        Matcher matcher = pattern.matcher(phoneNumber);
-
-        if(matcher.matches()){
+    private boolean validateEmailPhoneNull(UserDTO userDTO) {
+        if (userDTO.getPhoneNumber() != null || userDTO.getEmail() != null){
             return true;
         }else{
-            throw new RuntimeException("Numero Invalido ");
-        }*/
+            throw new RuntimeException("There must be a Phone Number or Email");
+        }
+    }
+
+    private boolean validateFirstName(String firstName) {
+        if(firstName != null && firstName.length() > 0 && firstName.matches("^[0-9a-zA-z]*$") && firstName.length() <= 120){
+            return true;
+        }else{
+            throw new RuntimeException("Invalid First Name");
+        }
+    }
+
+    private boolean ValidateLastName(String lastName) {
+        if(lastName != null && lastName.length() > 0 && lastName.matches("^[0-9a-zA-z]*$") && lastName.length() <= 120){
+            return true;
+        }else{
+            throw new RuntimeException("Invalid Last Name");
+        }
+    }
+
+    private boolean validatePhoneNumber(String phoneNumber) {
+        if(phoneNumber.length() == 13 && phoneNumber.startsWith("+57") && phoneNumber.substring(3).length() == 10 && phoneNumber.substring(3).matches("^[0-9]*$")){
+            return true;
+        }else{
+            throw new RuntimeException("Invalid Phone Number");
+        }
     }
 
     private boolean validateEmail(String email) {
-        String[] temp = email.split("@");
-        if(temp[1].equals("icesi.edu.co") && (temp[0].matches("^[0-9a-zA-z]*$"))){
+        if (email.split("@")[1].equals("icesi.edu.co") && (email.split("@")[0].matches("^[0-9a-zA-z]*$"))){
             return true;
         }else{
-            throw new RuntimeException("Correo Invalido");
+            throw new RuntimeException("Invalid Email");
         }
     }
 
