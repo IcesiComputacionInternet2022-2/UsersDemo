@@ -26,9 +26,10 @@ public class UserController implements UserAPI {
 
     @Override
     public UserDTO createUser(UserDTO userDTO) {
-        if (validateEmail(userDTO.getEmail()) && validatePhone(userDTO.getPhoneNumber()))
+        if (validateEmail(userDTO.getEmail()) && validatePhone(userDTO.getPhoneNumber())
+                && validateCamps(userDTO.getEmail(),userDTO.getPhoneNumber()) && validateName(userDTO.getFirstName(),userDTO.getLastName()))
             return userMapper.fromUser(userService.createUser(userMapper.fromDTO(userDTO)));
-        else throw new RuntimeException("Correo invalido");
+        else throw new RuntimeException();
     }
 
     @Override
@@ -43,15 +44,18 @@ public class UserController implements UserAPI {
         else return false;
     }
     private boolean validatePhone(String phone){
-        if (phone.substring(0,2).equals("+57") && phone.matches("^[0-9]+$")&&phone.length()==10)
-            return true;
+        if (phone.startsWith("+57") && phone.substring(3,12).matches("^[0-9]*$")&&phone.length()==13) return true;
         else return false;
     }
-
     private boolean validateCamps(String email,String phone){
-        if (email.matches("^[0-9a-zA-Z]+$"))
-            if (phone.matches("^[0-9a-zA-Z]+$"))
-                return true;
-        else return false;
+        if (validateEmail(email) | validatePhone(phone)) {
+            return true;
+        }else return false;
+    }
+    private boolean validateName(String fName,String lName){
+        if (fName.length() <120 && lName.length()<120) {
+            if(fName.matches("^[a-zA-Z]+$") && lName.matches("^[a-zA-Z]+$")) return true;
+            else return false;
+        }else return false;
     }
 }
