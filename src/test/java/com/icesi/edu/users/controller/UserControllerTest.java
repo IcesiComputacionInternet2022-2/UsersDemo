@@ -143,10 +143,6 @@ public class UserControllerTest {
         userController.getUsers();
         verify(userService, times(1)).getUsers();
     }
-    @Test
-    public void acceptGetUserOneTime(){
-        userController.getUser(any());
-        verify(userService, times(1)).getUsers();
-    }
+
 
 }
