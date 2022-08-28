@@ -42,20 +42,26 @@ public class UserController implements UserAPI {
 
     private boolean validateUser(UserDTO userDTO){
 
+        boolean isValidUser = false;
         UserValidations fieldValidation = validateUserNulls(userDTO);
         switch (fieldValidation){
             case NOT_NULLS:
-                return validateUserEmail(userDTO) && validateUserPhoneNumber(userDTO) && validateUserNames(userDTO);
+                isValidUser = validateUserEmail(userDTO) && validateUserPhoneNumber(userDTO) && validateUserNames(userDTO);
+                break;
 
             case EMAIL_NULL:
-                return validateUserPhoneNumber(userDTO) && validateUserNames(userDTO);
+                isValidUser = validateUserPhoneNumber(userDTO) && validateUserNames(userDTO);
+                break;
 
             case PHONE_NULL:
-                return validateUserEmail(userDTO) & validateUserNames(userDTO);
+                isValidUser = validateUserEmail(userDTO) & validateUserNames(userDTO);
+                break;
 
-            default:
-                return false;
+            case EMAIL_PHONE_NULL:
+                break;
         }
+
+        return isValidUser;
     }
 
     private UserValidations validateUserNulls(UserDTO userDTO){
@@ -68,7 +74,7 @@ public class UserController implements UserAPI {
             fieldValidation = UserValidations.EMAIL_NULL;
         }
 
-        if(validateUserEmailNotNull(userDTO.getEmail()) && validateUserPhoneNotNull(userDTO.getPhoneNumber())){
+        if(validateUserEmailNotNull(userDTO.getEmail()) && !validateUserPhoneNotNull(userDTO.getPhoneNumber())){
             fieldValidation = UserValidations.PHONE_NULL;
         }
 
