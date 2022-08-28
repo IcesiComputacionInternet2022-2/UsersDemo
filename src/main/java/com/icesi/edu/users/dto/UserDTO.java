@@ -23,4 +23,13 @@ public class UserDTO {
     private String lastName;
 
     private String date;
+
+    public UserDTO(UUID uuid, String email, String phoneNumber, String firstName, String lastName) {
+        this.id = uuid;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        date = "Not yet consulted";
+    }
 }

@@ -19,6 +19,8 @@ public class UserServiceTest {
 
     private UserService userService;
     private UserRepository userRepository;
+    private User user;
+    private UUID uuid;
 
     @BeforeEach
     private void init(){
@@ -26,35 +28,29 @@ public class UserServiceTest {
         userService= new UserServiceImpl(userRepository);
     }
 
-    @Test
-    public void testCreateUser(){
-        UUID uuid = UUID.randomUUID();
+    private void setupScene1(){
+        uuid = UUID.randomUUID();
         String email = "juandavid227@icesi.edu.co";
         String phoneNumber = "+573166670887";
         String firstName = "Juan";
         String lastName = "Cruz";
 
-        User user1 = new User(uuid,email,phoneNumber,firstName,lastName);
+        user = new User(uuid,email,phoneNumber,firstName,lastName);
+    }
 
-        //Create User
+    @Test
+    public void testCreateUser(){
+        setupScene1();
         when(userRepository.save(any())).thenReturn(new User());
-        User createdUser = userService.createUser(user1);
+        User createdUser = userService.createUser(user);
         assertNotNull(createdUser); //User is not null
         verify(userRepository,times(1)).save(any()); //Save is being called
     }
 
     @Test
     public void testGetUser(){
-        UUID uuid = UUID.randomUUID();
-        String email = "juandavid227@icesi.edu.co";
-        String phoneNumber = "+573166670887";
-        String firstName = "Juan";
-        String lastName = "Cruz";
-
-        User user1 = new User(uuid,email,phoneNumber,firstName,lastName);
-
-        //Get User
-        userService.createUser(user1);
+        setupScene1();
+        userService.createUser(user);
         User obtainedUser = userService.getUser(uuid);
         verify(userRepository,times(1)).findById(any()); //Save is being called
     }
@@ -62,12 +58,7 @@ public class UserServiceTest {
     @Test
     public void testGetUsers(){
         //First User
-        UUID uuid = UUID.randomUUID();
-        String email = "juandavid227@icesi.edu.co";
-        String phoneNumber = "+573166670887";
-        String firstName = "Juan";
-        String lastName = "Cruz";
-
+        setupScene1();
         //Second User
         UUID uuid2 = UUID.randomUUID();
         String email2 = "prueba@icesi.edu.co";
@@ -76,9 +67,8 @@ public class UserServiceTest {
         String lastName2 = "Garcia";
 
         //Create User
-        User user1 = new User(uuid,email,phoneNumber,firstName,lastName);
         User user2 = new User(uuid2,email2,phoneNumber2,firstName2,lastName2);
-        userService.createUser(user1);
+        userService.createUser(user);
         userService.createUser(user2);
         userService.getUsers();
         verify(userRepository,times(3)).findAll(); //It's called 3 times because createUser calls getUsers
@@ -86,22 +76,16 @@ public class UserServiceTest {
 
     @Test
     public void testNonRepeatedEmailOrNumber(){
-        UUID uuid = UUID.randomUUID();
-        String email = "juandavid227@icesi.edu.co";
-        String phoneNumber = "+573166670887";
-        String firstName = "Juan";
-        String lastName = "Cruz";
-
-        User user1 = new User(uuid,email,phoneNumber,firstName,lastName);
+        setupScene1();
         List<User> users = new ArrayList<>();
 
         //Create User
-        when(userRepository.save(any())).thenReturn(user1);
-        User createdUser =userService.createUser(user1);
+        when(userRepository.save(any())).thenReturn(user);
+        User createdUser =userService.createUser(user);
         users.add(createdUser);
         when(userService.getUsers()).thenReturn(users);
         try{  //have to use "try catch" because if I don't, test doesn't run.
-            userService.createUser(user1);
+            userService.createUser(user);
         }catch (Exception e){
             //System.out.println("Entre"); Fuerza bruta para ver si entraba (si lo hace jaja)
             verify(userRepository,times(1)).save(any());
