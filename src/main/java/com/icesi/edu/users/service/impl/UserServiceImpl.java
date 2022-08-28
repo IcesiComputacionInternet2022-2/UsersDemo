@@ -32,6 +32,7 @@ public class UserServiceImpl implements UserService {
                 throw new RuntimeException("Duplicated data");
             }
         }
+        System.out.println("Holaaaa");
 
         return userRepository.save(userDTO);
     }

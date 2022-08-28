@@ -22,16 +22,12 @@ public class UserServiceTest {
 
     private UserRepository userRepository;
     private UserService userService;
-
     private User user;
     private User anotherUser;
     private List<User> usersList;
 
-
-
-
     @BeforeEach
-    private void init(){
+    public void init(){
         userRepository = mock(UserRepository.class);
         userService = new UserServiceImpl(userRepository);
     }
@@ -78,9 +74,10 @@ public class UserServiceTest {
         setupScenary1();
         when(userRepository.save(any())).thenReturn(user);
         User result = userService.createUser(anotherUser);
-        verify(userRepository,times(1)).save(any());
+
 
         userService.createUser(anotherUser);
+        verify(userRepository,times(2)).save(any());
     }
 
     @Test
@@ -98,6 +95,29 @@ public class UserServiceTest {
         when(userRepository.findAllById(any())).thenReturn(any());
         userService.getUser(user.getId());
         verify(userRepository, times(1)).findById(any());
+
+    }
+
+    @Test
+    public void testCreateUserWithRepeatedEmail(){
+
+        setupScenary2();
+
+        String email ="nicolasp@icesi.edu.co";;
+        String phoneNumber = "+573166017117";
+        String name = "Jose";
+        String lastName = "Mora";
+
+        try {
+            userService.createUser(user);
+            verify(userRepository, times(1)).save(any());
+            when(userService.getUsers()).thenReturn(usersList);
+            userService.createUser(new User(UUID.randomUUID(), email, phoneNumber,name, lastName));
+            fail("RuntimeException expected");
+        }catch (RuntimeException e){
+            assertEquals(2, userService.getUsers().size());
+        }
+
 
     }
 
