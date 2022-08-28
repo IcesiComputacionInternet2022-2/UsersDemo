@@ -21,5 +21,4 @@ public interface UserAPI {
 
     @GetMapping
     public List<UserDTO> getUsers();
-
 }
