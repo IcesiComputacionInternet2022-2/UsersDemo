@@ -5,8 +5,6 @@ import com.icesi.edu.users.repository.UserRepository;
 import com.icesi.edu.users.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -25,17 +23,32 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User createUser(User userDTO) {
-        return userRepository.save(userDTO);
+    	if(verifyUser(userDTO)) {
+    		return userRepository.save(userDTO);
+    	}
+    	else {
+    		return null;
+    	}
     }
 
     @Override
     public List<User> getUsers() {
         return StreamSupport.stream(userRepository.findAll().spliterator(),false).collect(Collectors.toList());
     }
+    
+    
+    private boolean verifyUser(User user){
+    	User temp;
+        List<User> users = getUsers();
+        if(!users.isEmpty()) {
+        	for(int i=0;i<=users.size();i++) {
+            	temp = users.get(i);
+            	if(temp.getPhoneNumber().equals(user.getPhoneNumber()) || temp.getEmail().equals(user.getEmail())) {
+            		return false;
+            	}
+            }
+        }
+        return true;
+    }
 
-	@Override
-	public boolean verifyEmail(String email) {
-		// TODO Auto-generated method stub
-		return false;
-	}
 }

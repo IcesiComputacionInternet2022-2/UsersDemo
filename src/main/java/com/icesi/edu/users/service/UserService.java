@@ -1,10 +1,10 @@
 package com.icesi.edu.users.service;
 
-import com.icesi.edu.users.dto.UserDTO;
+//import com.icesi.edu.users.dto.UserDTO;
 import com.icesi.edu.users.model.User;
-import org.springframework.web.bind.annotation.GetMapping;
+//import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+//import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
@@ -17,5 +17,4 @@ public interface UserService {
 
     public List<User> getUsers();
     
-    public boolean verifyEmail(String email);
 }

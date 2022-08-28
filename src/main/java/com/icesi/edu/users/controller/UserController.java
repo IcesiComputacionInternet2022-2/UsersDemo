@@ -24,21 +24,44 @@ public class UserController implements UserAPI {
 
     @Override
     public UserDTO createUser(UserDTO userDTO) {
-        return userMapper.fromUser(userService.createUser(userMapper.fromDTO(userDTO)));
+    	if (verifyUser(userDTO)) return userMapper.fromUser(userService.createUser(userMapper.fromDTO(userDTO)));
+    	return null;
     }
 
     @Override
     public List<UserDTO> getUsers() {
-        return userService.getUsers().stream().map(userMapper::fromUser).collect(Collectors.toList());
+    	return userService.getUsers().stream().map(userMapper::fromUser).collect(Collectors.toList());
     }
 
-	@Override
-	public boolean verifyEmail(String email) {
-		//String[] parts = line.split("\\|");
-		//double part1 = Double.parseDouble(parts[0]);
-		//double part2 = Double.parseDouble(parts[1]);
-		return false;
+	public boolean verifyUser(UserDTO user) {
+		boolean answer = verifyEmail(user.getEmail()) && verifyPhone(user.getPhoneNumber()) && verifyName(user.getFirstName()) && verifyName(user.getLastName());
+		return answer;
 	}
-    
+	
+	private boolean verifyEmail(String email){
+        String emailEntered = "\\w+@icesi.edu.co$";
+        if(email.matches(emailEntered)) {
+        	return true;
+        }else {
+        	return false;
+        }
+    }
 
+    private boolean verifyPhone(String phone){
+        String phoneEntered = "^(\\+57)[0-9]{10}";
+        if(phone.matches(phoneEntered)) {
+        	return true;
+        }else {
+        	return false;
+        }
+    }
+
+    private boolean verifyName(String name){
+        String nameEntered = "[aA-zZ]";
+        if(name.matches(nameEntered)) {
+        	return true;
+        }else {
+        	return false;
+        }
+    }
 }

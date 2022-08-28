@@ -22,14 +22,5 @@ public class UserRepositoryTest {
 
     @Autowired
     private UserRepository userRepository;
-
-    /*
-    @Test
-    public void whenCalledSave_thenCorrectNumberOfUsers() {
-        userRepository.save(User.builder().email("asds").phoneNumber("asdsd").firstName("John").lastName("Doe").build());
-        List<User> users = (List<User>) userRepository.findAll();
-
-        assertThat(users.size()).isEqualTo(1);
-    }
-    */
+    
 }
