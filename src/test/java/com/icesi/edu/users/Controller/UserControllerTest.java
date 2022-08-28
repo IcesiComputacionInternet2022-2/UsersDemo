@@ -54,7 +54,6 @@ public class UserControllerTest {
             userController.createUser(userDTO);
         }
         catch (Exception e){
-            System.out.println(e.getMessage());
             return true;
         }
         return false;
