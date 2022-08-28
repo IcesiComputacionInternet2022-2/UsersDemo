@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -24,14 +25,39 @@ public class UserServiceImpl implements UserService {
         return userRepository.findById(userId).orElse(null);
     }
 
+
+
     @Override
     public User createUser(User userDTO) {
 
-        return userRepository.save(userDTO);
+        verifyEmailRepeat(userDTO.getEmail())  ;
+        verifyPhoneNumberRepeat(userDTO.getPhoneNumber());
+            return userRepository.save(userDTO);
+
     }
 
     @Override
     public List<User> getUsers() {
-        return StreamSupport.stream(userRepository.findAll().spliterator(),false).collect(Collectors.toList());
+        List<User> userList=StreamSupport.stream(userRepository.findAll().spliterator(),false).collect(Collectors.toList());
+
+        return userList;
     }
+
+    public void verifyEmailRepeat(String email){
+        for (User i:getUsers()) {
+            if (i.getEmail().equals(email)){
+                throw new RuntimeException("Throw new RuntimeException");
+            }
+        }
+    }
+
+    public void verifyPhoneNumberRepeat(String phoneNumber){
+        for (User i:getUsers()) {
+            if (i.getPhoneNumber().equals(phoneNumber)){
+                throw new RuntimeException("Throw new RuntimeException");
+            }
+        }
+    }
+
+
 }
