@@ -19,6 +19,7 @@ public class UserControllerTest {
     private UserService userService;
     private UserMapper userMapper;
     private UserDTO userDTO;
+    private UUID uuid;
 
     @BeforeEach
     private void init(){
@@ -28,7 +29,7 @@ public class UserControllerTest {
     }
 
     private void setupScene1(){
-        UUID uuid = UUID.randomUUID();
+        uuid = UUID.randomUUID();
         String email = "juandavid227@icesi.edu.co";
         String phoneNumber = "+573166670887";
         String firstName = "Juan";
@@ -46,6 +47,13 @@ public class UserControllerTest {
     public void testGetUsers(){
         userController.getUsers();
         verify(userService, times(1)).getUsers();
+    }
+
+    @Test
+    public void testGetUser(){
+        setupScene1();
+        userController.getUser(uuid);
+        verify(userService,times(1)).getUser(uuid);
     }
 
     private boolean createGeneratesException(){
