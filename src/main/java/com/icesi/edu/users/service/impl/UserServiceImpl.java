@@ -24,12 +24,27 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User createUser(User userDTO) {
-        return userRepository.save(userDTO);
+    public User createUser(User userDTO) throws RuntimeException{
+
+        if(validateRepeatedEmail(userDTO.getEmail()) == false){
+            throw new RuntimeException("Email already in use. Please use another one");
+        } else if (validateRepeatedPhone(userDTO.getPhoneNumber()) == false) {
+            throw new RuntimeException("Phone already in use. Please use another one");
+        }else{
+            return userRepository.save(userDTO);
+        }
     }
 
     @Override
     public List<User> getUsers() {
         return StreamSupport.stream(userRepository.findAll().spliterator(),false).collect(Collectors.toList());
+    }
+
+    private boolean validateRepeatedEmail(String email){
+        return userRepository.findByEmail(email).isEmpty();
+    }
+
+    private boolean validateRepeatedPhone(String phoneNumber){
+        return userRepository.findByPhoneNumber(phoneNumber).isEmpty();
     }
 }

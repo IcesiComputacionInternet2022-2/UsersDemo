@@ -26,8 +26,36 @@ public class UserController implements UserAPI {
     }
 
     @Override
-    public UserDTO createUser(UserDTO userDTO) {
-        return userMapper.fromUser(userService.createUser(userMapper.fromDTO(userDTO)));
+    public UserDTO createUser(UserDTO userDTO) throws RuntimeException{
+
+        if(validateEmailOrPhone(userDTO) == false){
+            throw new RuntimeException("Email or Phone field has to be filled");
+
+        } else if (validateEmailDomain(userDTO.getEmail()) == false) {
+            throw new RuntimeException("Email domain not valid");
+
+        } else if (validateEmailUsername(userDTO.getEmail()) == false) {
+            throw new RuntimeException("Email invalid");
+
+        } else if (validatePhoneNumber(userDTO.getPhoneNumber()) == false) {
+            throw new RuntimeException("Phone number invalid");
+
+        } else if (validateFirstNameLength(userDTO.getFirstName()) == false) {
+            throw new RuntimeException("First name exceeds limit size (120 characters)");
+
+        } else if (validateLastNameLength(userDTO.getLastName()) == false) {
+            throw new RuntimeException("Last name exceeds limit size (120 characters)");
+
+        } else if (validateFirstNameSpecialCharacters(userDTO.getFirstName()) == false) {
+            throw new RuntimeException("First name can't contain special characters nor numbers");
+
+        } else if (validateLastNameSpecialCharacters(userDTO.getLastName()) == false) {
+            throw new RuntimeException("Last name can't contain special characters nor numbers");
+
+        }else{
+            return userMapper.fromUser(userService.createUser(userMapper.fromDTO(userDTO)));
+
+        }
     }
 
     @Override
@@ -36,26 +64,34 @@ public class UserController implements UserAPI {
     }
 
     private boolean validateEmailOrPhone(UserDTO userDTO){
-        return userDTO.getEmail() != null && userDTO.getPhoneNumber() != null;
+        return userDTO.getEmail() != null || userDTO.getPhoneNumber() != null;
     }
 
     private boolean validateEmailDomain(String email){
-        return email !=null && email.matches("@icesi\\.edu\\.co$");
+        return email.matches("^[a-zA-Z0-9._-]+@icesi\\.edu\\.co$");
     }
 
     private boolean validateEmailUsername(String email){
-        return email.matches("^[a-zA-Z0-9._-]+@");
+        return email.matches("^[a-zA-Z0-9._-]+@icesi\\.edu\\.co$");
     }
 
     private boolean validatePhoneNumber(String phone){
-        return phone != null && phone.matches("^\\+57[0-9]{10}$");
+        return phone.matches("^\\+57[0-9]{10}$");
     }
     private boolean validateFirstNameLength(String firstName){
-        return false;
+        return firstName != null && firstName.length() <= 120;
     }
 
     private boolean validateLastNameLength(String lastName){
-        return false;
+        return lastName != null && lastName.length() <= 120;
+    }
+
+    private boolean validateFirstNameSpecialCharacters(String firstName){
+        return firstName.matches("[a-zA-Z\\s]+");
+    }
+
+    private boolean validateLastNameSpecialCharacters(String lastName){
+        return lastName.matches("[a-zA-Z\\s]+");
     }
 
 
