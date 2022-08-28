@@ -26,7 +26,7 @@ public class UserControllerTest {
         userController = new UserController(userService, userMapper);
 
         when(userService.createUser(any())).thenReturn(
-                new User(null, "mock@icesi.edu.co", "+573153823657", "Mock", "Mockery"));
+                new User(null, "mock@icesi.edu.co", "+573153823657", "Mock", "Mockery", null));
     }
 
     @Test
@@ -37,7 +37,7 @@ public class UserControllerTest {
 
     @Test
     public void testGetUser() {
-        when(userService.getUser(any())).thenReturn(new User(null, "mock@icesi.edu.co", "+573153823657", "Mock", "Mockery"));
+        when(userService.getUser(any())).thenReturn(new User(null, "mock@icesi.edu.co", "+573153823657", "Mock", "Mockery", null));
         assertEquals("mock@icesi.edu.co", userController.getUser(null).getEmail());
     }
 

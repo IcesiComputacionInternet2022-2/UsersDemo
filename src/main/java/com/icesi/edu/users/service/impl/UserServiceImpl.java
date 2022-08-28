@@ -6,6 +6,7 @@ import com.icesi.edu.users.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -20,16 +21,47 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getUser(UUID userId) {
-        return userRepository.findById(userId).orElse(null);
+        User retUser = userRepository.findById(userId).orElse(null);
+        if (retUser != null) {
+            String idString = retUser.getId().toString();
+            int len = idString.length();
+            String idStringCover = "00000000-0000-0000-0000-00000000" + idString.substring(len - 4, len - 1) + idString.charAt(len - 1);
+            retUser.setId(UUID.fromString(idStringCover));
+            retUser.setModifiedTime(LocalDateTime.now());
+        }
+        return retUser;
     }
 
     @Override
     public User createUser(User userDTO) {
-        return userRepository.save(userDTO);
+        return (uniqueEmail(userDTO.getEmail()) && uniquePhone(userDTO.getPhoneNumber())) ? userRepository.save(userDTO) : null;
     }
 
-    @Override
-    public List<User> getUsers() {
+    private List<User> getUsersRaw() {
         return StreamSupport.stream(userRepository.findAll().spliterator(),false).collect(Collectors.toList());
+    }
+
+    public List<User> getUsers() {
+        List<User> users = getUsersRaw();
+        for (User u : users) {
+            String idString = u.getId().toString();
+            int len = idString.length();
+            String idStringCover = "00000000-0000-0000-0000-00000000" + idString.substring(len - 4, len - 1) + idString.charAt(len - 1);
+            u.setId(UUID.fromString(idStringCover));
+        }
+        return users;
+    }
+
+
+    /* Validations */
+
+    private boolean uniquePhone(String phone) {
+        for (User u : getUsers()) if (u.getPhoneNumber().equals(phone)) return false;
+        return true;
+    }
+
+    private boolean uniqueEmail(String email) {
+        for (User u : getUsers()) if (u.getEmail().equals(email)) return false;
+        return true;
     }
 }
