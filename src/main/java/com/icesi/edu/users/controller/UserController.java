@@ -17,7 +17,6 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class UserController implements UserAPI {
 
-
     public final UserService userService;
     public final UserMapper userMapper;
 
@@ -33,8 +32,8 @@ public class UserController implements UserAPI {
         String firstName = userDTO.getFirstName();
         String lastName = userDTO.getLastName();
 
-        if(!(validateDomain(email) && hasSpecialCharacters(email) && colombianNumber(phone) && !numberContainsWhiteSpaces(phone) && validSizeNumber(phone)
-        && hasAtLeastOneContactWay(email, phone) && namesSizeValidation(firstName, lastName) && noSpecialCharactersOnNames(firstName, lastName))){
+        if(!(validateDomain(email) && !hasSpecialCharacters(email) && colombianNumber(phone) && !numberContainsWhiteSpaces(phone) && validSizeNumber(phone)
+        && hasAtLeastOneContactWay(email, phone) && namesSizeValidation(firstName, lastName) && !hasSpecialCharactersOnNames(firstName, lastName))){
             throw new RuntimeException("Write valid data and try again. c:");
         }else{
             return userMapper.fromUser(userService.createUser(userMapper.fromDTO(userDTO)));
@@ -47,7 +46,7 @@ public class UserController implements UserAPI {
     }
 
     public boolean validateDomain(String email){
-        return email.toUpperCase().contains("@ICESI.EDU.CO");
+        return email.toUpperCase().matches("^.*(@ICESI\\.EDU\\.CO)$");
     }
 
     public boolean hasSpecialCharacters(String email){
@@ -73,12 +72,16 @@ public class UserController implements UserAPI {
     }
 
     public boolean validSizeNumber(String number){
-        String actualNumber = number.substring(4);
+        if(number != null){
+            String actualNumber = number.substring(3);
 
-        Pattern pattern = Pattern.compile("[^0-9]");
-        Matcher matcher = pattern.matcher(actualNumber);
+            Pattern pattern = Pattern.compile("[^0-9]");
+            Matcher matcher = pattern.matcher(actualNumber);
 
-        return matcher.find() && actualNumber.length() == 10;
+            return !matcher.find() && actualNumber.length() == 10;
+        }else{
+            return true;
+        }
     }
 
     public boolean hasAtLeastOneContactWay(String email, String number){
@@ -89,7 +92,8 @@ public class UserController implements UserAPI {
         return (firstName.length() <= 120 && lastName.length() <= 120);
     }
 
-    public boolean noSpecialCharactersOnNames(String firstName, String lastName){
+    public boolean hasSpecialCharactersOnNames(String firstName, String lastName){
+
         Pattern pattern = Pattern.compile("[^a-zA-Z]");
         Matcher matcher1 = pattern.matcher(firstName);
         Matcher matcher2 = pattern.matcher(lastName);

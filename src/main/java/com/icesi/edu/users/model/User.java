@@ -10,6 +10,8 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.UUID;
 
 
@@ -32,6 +34,8 @@ public class User {
     private String firstName;
 
     private String lastName;
+
+   private LocalDate lastTimeSearched;
 
     @PrePersist
     public void generateId(){
