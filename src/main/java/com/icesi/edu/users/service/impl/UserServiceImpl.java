@@ -25,9 +25,22 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User createUser(User userDTO) {
+        if(duplicateData(userDTO)){
+            throw new RuntimeException("One of these records is already in the system");
+        }
+
         return userRepository.save(userDTO);
     }
-
+    public boolean duplicateData(User userDTO){
+        boolean duplicate = false;
+        List<User> users = getUsers();
+        for(int i = 0; i<users.size(); i++){
+            if(users.get(i).getEmail().equals(userDTO.getEmail())||users.get(i).getPhoneNumber().equals(userDTO.getPhoneNumber())){
+            duplicate = true;
+            }
+        }
+        return duplicate;
+    }
     @Override
     public List<User> getUsers() {
         return StreamSupport.stream(userRepository.findAll().spliterator(),false).collect(Collectors.toList());
