@@ -21,8 +21,12 @@ public class UserController implements UserAPI {
     public final UserMapper userMapper;
 
     @Override
-    public UserDTO getUser(UUID userId) {
-        return userMapper.fromUser(userService.getUser(userId));
+    public UserDTO getUser(UUID userId) throws RuntimeException{
+        if(userId == null){
+           throw new RuntimeException("UserID can't be empty");
+        }else{
+            return userMapper.fromUser(userService.getUser(userId));
+        }
     }
 
     @Override

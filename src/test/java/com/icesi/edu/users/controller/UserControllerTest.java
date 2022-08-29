@@ -11,8 +11,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -23,6 +22,7 @@ public class UserControllerTest {
     private UserService userService;
     private UserDTO testUser;
     private User userResponse;
+    private UUID id1;
 
     @BeforeEach
     public void init(){
@@ -31,9 +31,9 @@ public class UserControllerTest {
 
         userController = new UserController(userService, userMapper);
 
-        UUID id = UUID.randomUUID();
-        testUser = new UserDTO(id, "juan@icesi.edu.co", "+573012345678", "Juan Jose", "Calderon");
-        userResponse = new User(id, "juan@icesi.edu.co", "+573012345678", "Juan Jose", "Calderon");
+        id1 = UUID.randomUUID();
+        testUser = new UserDTO(id1, "juan@icesi.edu.co", "+573012345678", "Juan Jose", "Calderon");
+        userResponse = new User(id1, "juan@icesi.edu.co", "+573012345678", "Juan Jose", "Calderon");
 
         when(userService.createUser(any())).thenReturn(userResponse);
     }
@@ -172,7 +172,25 @@ public class UserControllerTest {
         verify(userService, times(0)).createUser(any());
     }
 
+    @Test
+    public void testGetUserCorrectly(){
+        when(userController.getUser(id1)).thenReturn(testUser);
+        assertEquals(testUser, userController.getUser(id1));
+        verify(userService, atLeastOnce()).getUser(any());
+    }
 
-
+    @Test
+    public void testGetUserNull(){
+        when(userService.getUser(null)).thenReturn(null);
+        boolean exception = false;
+        try{
+            userController.getUser(null);
+        }catch (RuntimeException e){
+            System.out.println(e.getMessage());
+            exception = true;
+        }
+        assertTrue(exception);
+        verify(userService, never()).getUser(any());
+    }
 
 }
