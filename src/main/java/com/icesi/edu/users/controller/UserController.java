@@ -35,16 +35,16 @@ public class UserController implements UserAPI {
             throw new RuntimeException("Email domain not valid");
 
         } else if (validateEmailUsername(userDTO.getEmail()) == false) {
-            throw new RuntimeException("Email invalid");
+            throw new RuntimeException("Email username invalid");
 
         } else if (validatePhoneNumber(userDTO.getPhoneNumber()) == false) {
             throw new RuntimeException("Phone number invalid");
 
         } else if (validateFirstNameLength(userDTO.getFirstName()) == false) {
-            throw new RuntimeException("First name exceeds limit size (120 characters)");
+            throw new RuntimeException("First name is empty or exceeds limit size (120 characters)");
 
         } else if (validateLastNameLength(userDTO.getLastName()) == false) {
-            throw new RuntimeException("Last name exceeds limit size (120 characters)");
+            throw new RuntimeException("Last name is empty or exceeds limit size (120 characters)");
 
         } else if (validateFirstNameSpecialCharacters(userDTO.getFirstName()) == false) {
             throw new RuntimeException("First name can't contain special characters nor numbers");
