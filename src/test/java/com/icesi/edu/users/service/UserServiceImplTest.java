@@ -16,6 +16,10 @@ import static org.assertj.core.api.Assertions.assertThatIOException;
 @SpringBootTest
 public class UserServiceImplTest {
 
+    void stage1(){
+        User u1 = new User(UUID.randomUUID(),"Jhon@icesi.edu.co","+573152324657","Jhon","Paredes",new Date());
+    }
+
     @Autowired
     private UserService userService;
 
