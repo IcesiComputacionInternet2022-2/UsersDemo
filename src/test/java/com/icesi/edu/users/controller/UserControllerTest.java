@@ -2,6 +2,7 @@ package com.icesi.edu.users.controller;
 
 import com.icesi.edu.users.dto.UserDTO;
 import com.icesi.edu.users.mapper.UserMapper;
+import com.icesi.edu.users.mapper.UserMapperImpl;
 import com.icesi.edu.users.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,7 +24,7 @@ public class UserControllerTest {
     @BeforeEach
     public void init(){
         userService = mock(UserService.class);
-        userMapper = mock(UserMapper.class);
+        userMapper = new UserMapperImpl();
         userController = new UserController(userService, userMapper);
     }
 

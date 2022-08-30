@@ -74,7 +74,7 @@ public class UserServiceTest {
         setupScenary1();
         when(userRepository.save(any())).thenReturn(user);
         User result = userService.createUser(anotherUser);
-
+        //Agregar fail
 
         userService.createUser(anotherUser);
         verify(userRepository,times(2)).save(any());
