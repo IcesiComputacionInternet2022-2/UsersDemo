@@ -31,16 +31,20 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User createUser(User userDTO) {
-        emailOrPhoneNumber(userDTO);
-        uniquePhoneNumber(userDTO);
-        stringNotToLong(userDTO.getFirstName());
-        stringNotToLong(userDTO.getLastName());
-            return userRepository.save(userDTO);
+        verifyCreateUser(userDTO);
+        return userRepository.save(userDTO);
     }
 
     @Override
     public List<User> getUsers() {
         return StreamSupport.stream(userRepository.findAll().spliterator(),false).collect(Collectors.toList());
+    }
+
+    private void verifyCreateUser(User userDTO) {
+        emailOrPhoneNumber(userDTO);
+        uniquePhoneNumber(userDTO);
+        stringNotToLong(userDTO.getFirstName());
+        stringNotToLong(userDTO.getLastName());
     }
 
     private void emailOrPhoneNumber(User userDTO) {
