@@ -4,9 +4,9 @@ import com.icesi.edu.users.model.User;
 import com.icesi.edu.users.repository.UserRepository;
 import com.icesi.edu.users.service.UserService;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -36,4 +36,4 @@ public class UserServiceImpl implements UserService {
     private void notExistRepeatEmail(){
         System.out.println(userRepository.findAll());
     }
-}
+}//End UserRepository
