@@ -1,9 +1,13 @@
 package com.icesi.edu.users.service.impl;
 
+import com.icesi.edu.users.constant.ErrorConstants;
+import com.icesi.edu.users.error.exception.UserDemoError;
+import com.icesi.edu.users.error.exception.UserDemoException;
 import com.icesi.edu.users.model.User;
 import com.icesi.edu.users.repository.UserRepository;
 import com.icesi.edu.users.service.UserService;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -18,7 +22,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getUser(UUID userId) {
-        return userRepository.findById(userId).orElse(null);
+        return userRepository.findById(userId).orElseThrow(() -> new UserDemoException(HttpStatus.NOT_FOUND, new UserDemoError("11", ErrorConstants.CODE_UD_11)));
     }
 
     @Override

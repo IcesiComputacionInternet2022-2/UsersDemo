@@ -1,6 +1,7 @@
 package com.icesi.edu.users.controller;
 
 import com.icesi.edu.users.dto.UserDTO;
+import com.icesi.edu.users.error.exception.UserDemoException;
 import com.icesi.edu.users.mapper.UserMapper;
 import com.icesi.edu.users.mapper.UserMapperImpl;
 import com.icesi.edu.users.service.UserService;
@@ -50,8 +51,10 @@ public class UserControllerTest {
 
         try {
             UserDTO createdUser = userController.createUser(user);
-        }catch (RuntimeException e){
+        }catch (UserDemoException e){
+            System.out.println(e.getError().getMessage());
             thrown = true;
+
         }
 
         return thrown;
