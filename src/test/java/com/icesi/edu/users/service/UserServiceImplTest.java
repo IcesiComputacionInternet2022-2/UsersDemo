@@ -55,12 +55,18 @@ public class UserServiceImplTest {
         verify(userRepository, times(1)).save(any());
     }
 
-    /*@Test
+    @Test
     public void createUserRepeatedEmail() {
         setupScenario1();
+        boolean response = false;
         userService.createUser(userTestModel);
-        assertThrows(RuntimeException.class, () -> userService.createUser(anotherUserTestModel));
-    }*/
+        try {
+            userService.createUser(userTestModel);
+        } catch (RuntimeException e) {
+            response = true;
+        }
+        assertTrue(response);
+    }
 
     @Test
     public void getUserTest(){
