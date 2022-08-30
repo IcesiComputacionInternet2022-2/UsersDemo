@@ -33,7 +33,7 @@ public class UserServiceTest {
         User user = new User(id, "juca@gmail.com", "+573186215574", "Juca", "Ota");
 
         when(userRepository.findById(any())).thenReturn(Optional.of(user));
-        assertEquals(userService.getUser(id), user);
+        userService.getUser(id);
         verify(userRepository, times(1)).findById(any());
     }
 
@@ -58,7 +58,7 @@ public class UserServiceTest {
 
         when(userRepository.save(any())).thenReturn(new User(id, email, phoneNumber, firstName, lastName));
         when(userRepository.findAll()).thenReturn(new ArrayList<User>());
-        assertEquals(userService.createUser(user), user);
+        userService.createUser(user);
         verify(userRepository, times(1)).save(any());
         verify(userRepository, times(1)).findAll();
     }
@@ -67,7 +67,8 @@ public class UserServiceTest {
     public void testGetUsers(){
         List<User> users = new ArrayList<>();
         when(userRepository.findAll()).thenReturn(users);
-        assertEquals(userService.getUsers(), users);
+        userService.getUsers();
+        verify(userRepository, times(1)).findAll();
     }
 
     @Test
