@@ -4,6 +4,7 @@ import com.icesi.edu.users.dto.UserDTO;
 import com.icesi.edu.users.mapper.UserMapper;
 import com.icesi.edu.users.model.User;
 import com.icesi.edu.users.service.UserService;
+import com.icesi.edu.users.error.exception.UserDemoException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.util.List;
@@ -22,7 +23,6 @@ public class UserControllerTest {
 
     private UserController userController;
     private UserService userService;
-
     private UserMapper userMapper;
 
     @BeforeEach
@@ -70,8 +70,8 @@ public class UserControllerTest {
         when(userMapper.fromUser(any())).thenReturn(new UserDTO(UUID.randomUUID(), "johndoe@icesi.edu.co", "+571231230123", "John", "Doe", ""));
         try {
             assertNotNull(userController.createUser(new UserDTO(null, "johndoe@icesi.edu.co", "+571231230123", "John", "Doe", "")));
-        } catch (RuntimeException runtimeException) {
-            fail("RuntimeException not expected");
+        } catch (UserDemoException runtimeException) {
+            fail("UserDemoException not expected");
         }
     }
 
@@ -79,8 +79,8 @@ public class UserControllerTest {
     public void testControllerCreateUserWithoutRightDomain() {
         try {
             userController.createUser(new UserDTO(null, "johndoe@abc.edu.co", "+571231230123", "John", "Doe", ""));
-            fail("RuntimeException expected");
-        } catch (RuntimeException runtimeException) {
+            fail("UserDemoException expected");
+        } catch (UserDemoException runtimeException) {
             verify(userMapper, times(0)).fromUser(any());
         }
     }
@@ -89,8 +89,8 @@ public class UserControllerTest {
     public void testControllerCreateUserWithInvalidEmail() {
         try {
             userController.createUser(new UserDTO(null, "%$&.@icesi.edu.co", "+571231230123", "John", "Doe", ""));
-            fail("RuntimeException expected");
-        } catch (RuntimeException runtimeException) {
+            fail("UserDemoException expected");
+        } catch (UserDemoException runtimeException) {
             verify(userMapper, times(0)).fromUser(any());
         }
     }
@@ -98,9 +98,9 @@ public class UserControllerTest {
     @Test
     public void testControllerCreateUserWithDifferentColombianPhoneNumberExtension() {
         try {
-            userController.createUser(new UserDTO(null, "johndoe@abc.edu.co", "+501231230123", "John", "Doe", ""));
-            fail("RuntimeException expected");
-        } catch (RuntimeException runtimeException) {
+            userController.createUser(new UserDTO(null, "johndoe@icesi.edu.co", "+501231230123", "John", "Doe", ""));
+            fail("UserDemoException expected");
+        } catch (UserDemoException runtimeException) {
             verify(userMapper, times(0)).fromUser(any());
         }
     }
@@ -108,9 +108,9 @@ public class UserControllerTest {
     @Test
     public void testControllerCreateUserWithInvalidColombianPhoneNumberExtension() {
         try {
-            userController.createUser(new UserDTO(null, "johndoe@abc.edu.co", "-571231230123", "John", "Doe", ""));
-            fail("RuntimeException expected");
-        } catch (RuntimeException runtimeException) {
+            userController.createUser(new UserDTO(null, "johndoe@icesi.edu.co", "-571231230123", "John", "Doe", ""));
+            fail("UserDemoException expected");
+        } catch (UserDemoException runtimeException) {
             verify(userMapper, times(0)).fromUser(any());
         }
     }
@@ -118,9 +118,9 @@ public class UserControllerTest {
     @Test
     public void testControllerCreateUserPhoneNumberWithSpaces() {
         try {
-            userController.createUser(new UserDTO(null, "johndoe@abc.edu.co", "+57 315 1230123 ", "John", "Doe", ""));
-            fail("RuntimeException expected");
-        } catch (RuntimeException runtimeException) {
+            userController.createUser(new UserDTO(null, "johndoe@icesi.edu.co", "+57 315 1230123 ", "John", "Doe", ""));
+            fail("UserDemoException expected");
+        } catch (UserDemoException runtimeException) {
             verify(userMapper, times(0)).fromUser(any());
         }
     }
@@ -128,9 +128,9 @@ public class UserControllerTest {
     @Test
     public void testControllerCreateUserWithInvalidPhoneNumberSize() {
         try {
-            userController.createUser(new UserDTO(null, "johndoe@abc.edu.co", "+57315123012", "John", "Doe", ""));
-            fail("RuntimeException expected");
-        } catch (RuntimeException runtimeException) {
+            userController.createUser(new UserDTO(null, "johndoe@icesi.edu.co", "+57315123012", "John", "Doe", ""));
+            fail("UserDemoException expected");
+        } catch (UserDemoException runtimeException) {
             verify(userMapper, times(0)).fromUser(any());
         }
     }
@@ -139,8 +139,8 @@ public class UserControllerTest {
     public void testControllerCreateUserWithoutEmailAndPhoneNumber() {
         try {
             userController.createUser(new UserDTO(null, "", "", "John", "Doe", ""));
-            fail("RuntimeException expected");
-        } catch (RuntimeException runtimeException) {
+            fail("UserDemoException expected");
+        } catch (UserDemoException runtimeException) {
             verify(userMapper, times(0)).fromUser(any());
         }
     }
@@ -150,8 +150,8 @@ public class UserControllerTest {
         try {
             userController.createUser(new UserDTO(null, "", "+571231230123", "John", "Doe", ""));
             verify(userMapper, times(1)).fromUser(any());
-        } catch (RuntimeException runtimeException) {
-            fail("RuntimeException not expected");
+        } catch (UserDemoException runtimeException) {
+            fail("UserDemoException not expected");
         }
     }
 
@@ -160,8 +160,8 @@ public class UserControllerTest {
         try {
             userController.createUser(new UserDTO(null, "johndoe@icesi.edu.co", "", "John", "Doe", ""));
             verify(userMapper, times(1)).fromUser(any());
-        } catch (RuntimeException runtimeException) {
-            fail("RuntimeException not expected");
+        } catch (UserDemoException runtimeException) {
+            fail("UserDemoException not expected");
         }
     }
 
@@ -169,8 +169,8 @@ public class UserControllerTest {
     public void testControllerCreateUserFirstNameSizeMoreThan120Characters() {
         try {
             userController.createUser(new UserDTO(null, "johndoe@icesi.edu.co", "+571231230123", "jdncjlcbwhkwcjelcnelnwcefhuchufbubchfbcfhieuefkycbuoducqjciwelcuifroyuewidbilewlcdvhitoñbyoihnobtirufewdbweuxwbdkedberifr", "Doe", ""));
-            fail("RuntimeException expected");
-        } catch (RuntimeException runtimeException) {
+            fail("UserDemoException expected");
+        } catch (UserDemoException runtimeException) {
             verify(userMapper, times(0)).fromUser(any());
         }
     }
@@ -179,8 +179,8 @@ public class UserControllerTest {
     public void testControllerCreateUserLastNameSizeMoreThan120Characters() {
         try {
             userController.createUser(new UserDTO(null, "johndoe@icesi.edu.co", "+571231230123", "John", "jdncjlcbwhkwcjelcnelnwcefhuchufbubchfbcfhieuefkycbuoducqjciwelcuifroyuewidbilewlcdvhitoñbyoihnobtirufewdbweuxwbdkedberifr", ""));
-            fail("RuntimeException expected");
-        } catch (RuntimeException runtimeException) {
+            fail("UserDemoException expected");
+        } catch (UserDemoException runtimeException) {
             verify(userMapper, times(0)).fromUser(any());
         }
     }
@@ -189,8 +189,8 @@ public class UserControllerTest {
     public void testControllerCreateUserFirstNameAndLastNameSizeMoreThan120Characters() {
         try {
             userController.createUser(new UserDTO(null, "johndoe@icesi.edu.co", "+571231230123", "mnjbhtrehgrejkwneiududfncndeciuelmwdmwuvurioewyvduwrufrovtijbsduwqbsytwdvr4biugtiugfberedjenfhtiungfreuydvwklgriuceirufuw", "jdncjlcbwhkwcjelcnelnwcefhuchufbubchfbcfhieuefkycbuoducqjciwelcuifroyuewidbilewlcdvhitoñbyoihnobtirufewdbweuxwbdkedberifr", ""));
-            fail("RuntimeException expected");
-        } catch (RuntimeException runtimeException) {
+            fail("UserDemoException expected");
+        } catch (UserDemoException runtimeException) {
             verify(userMapper, times(0)).fromUser(any());
         }
     }
@@ -200,8 +200,8 @@ public class UserControllerTest {
         try {
             userController.createUser(new UserDTO(null, "johndoe@icesi.edu.co", "+571231230123", "mnjbhtrehgrejkwneiuddfncndeciuelmwdmwuvurioewyvduwrufrovtijbsdmuwqbsytwdvrbiugtiugfberedjenfhtiungfreuydvwklgriuceirufuw", "jdncjlcbwhkwcjelcnelnwcefhuchufbubchbcfhieuefkycbuoducqjciwelcuifroyuewidbilewlcdvhitonbyoihnobtirufewdbweuxwbdkedberifr", ""));
             verify(userMapper, times(1)).fromUser(any());
-        } catch (RuntimeException runtimeException) {
-            fail("RuntimeException not expected");
+        } catch (UserDemoException runtimeException) {
+            fail("UserDemoException not expected");
         }
     }
 
@@ -210,8 +210,8 @@ public class UserControllerTest {
         try {
             userController.createUser(new UserDTO(null, "johndoe@icesi.edu.co", "+571231230123", "", "", ""));
             verify(userMapper, times(1)).fromUser(any());
-        } catch (RuntimeException runtimeException) {
-            fail("RuntimeException not expected");
+        } catch (UserDemoException runtimeException) {
+            fail("UserDemoException not expected");
         }
     }
 
@@ -219,8 +219,8 @@ public class UserControllerTest {
     public void testControllerCreateUserFirstNameAndLastNameWithNumbers() {
         try {
             userController.createUser(new UserDTO(null, "johndoe@icesi.edu.co", "+571231230123", "John12", "Doe90", ""));
-            fail("RuntimeException expected");
-        } catch (RuntimeException runtimeException) {
+            fail("UserDemoException expected");
+        } catch (UserDemoException runtimeException) {
             verify(userMapper, times(0)).fromUser(any());
         }
     }
@@ -229,8 +229,8 @@ public class UserControllerTest {
     public void testControllerCreateUserFirstNameAndLastNameWithSpecialCharacters() {
         try {
             userController.createUser(new UserDTO(null, "johndoe@icesi.edu.co", "+571231230123", "John&%.,", "Doe$!", ""));
-            fail("RuntimeException expected");
-        } catch (RuntimeException runtimeException) {
+            fail("UserDemoException expected");
+        } catch (UserDemoException runtimeException) {
             verify(userMapper, times(0)).fromUser(any());
         }
     }

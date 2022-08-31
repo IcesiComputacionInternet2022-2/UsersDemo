@@ -1,9 +1,13 @@
 package com.icesi.edu.users.service.impl;
 
+import com.icesi.edu.users.constant.ErrorConstants;
 import com.icesi.edu.users.model.User;
 import com.icesi.edu.users.repository.UserRepository;
 import com.icesi.edu.users.service.UserService;
+import com.icesi.edu.users.error.exception.UserDemoError;
+import com.icesi.edu.users.error.exception.UserDemoException;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.UUID;
@@ -23,9 +27,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User createUser(User user) {
-        if (validateUser(user.getEmail(), user.getPhoneNumber()))
-            return userRepository.save(user);
-        throw new RuntimeException();
+        validateUser(user.getEmail(), user.getPhoneNumber());
+        return userRepository.save(user);
     }
 
     @Override
@@ -33,10 +36,9 @@ public class UserServiceImpl implements UserService {
         return StreamSupport.stream(userRepository.findAll().spliterator(),false).collect(Collectors.toList());
     }
 
-    private boolean validateUser(String email, String phoneNumber) {
+    private void validateUser(String email, String phoneNumber) {
         for (User user : getUsers())
             if (user.getEmail().equals(email) || user.getPhoneNumber().equals(phoneNumber))
-                return false;
-        return true;
+                throw new UserDemoException(HttpStatus.BAD_REQUEST, new UserDemoError("05", ErrorConstants.CODE_UD_05));
     }
 }
