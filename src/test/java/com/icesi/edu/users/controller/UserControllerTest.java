@@ -18,7 +18,6 @@ public class UserControllerTest {
     private UserController userController;
     private UserService userService;
     private UserMapper userMapper;
-
     @BeforeEach
     public void init() {
         userService = mock(UserService.class);
@@ -30,14 +29,13 @@ public class UserControllerTest {
     public void testController() {
         UserDTO userDTO = new UserDTO(UUID.randomUUID(), "davidmontano1113@icesi.edu.co", "+573222050551", "David", "Montano", LocalTime.now());
         when(userService.createUser(any())).thenReturn(userMapper.fromDTO(userDTO));
-        userService.createUser(userMapper.fromDTO(userDTO));
+        userController.createUser(userDTO);
         verify(userService, times(1)).createUser(any());
     }
 
     @Test
     public void testControllerEmailDomainNotValid() {
         UserDTO userDTO = new UserDTO(UUID.randomUUID(), "davidmontano1113@ice.edu.co", "+573222050551", "David", "Montano", LocalTime.now());
-        when(userService.createUser(any())).thenReturn(userMapper.fromDTO(userDTO));
         assertThrows(RuntimeException.class, () -> userController.createUser(userDTO));
         verify(userService, times(0)).createUser(any());
     }
@@ -45,7 +43,6 @@ public class UserControllerTest {
     @Test
     public void testControllerEmailContainsSpecialCharacters() {
         UserDTO userDTO = new UserDTO(UUID.randomUUID(), "david-montano1113@icesi.edu.co", "+573222050551", "David", "Montano", LocalTime.now());
-        when(userService.createUser(any())).thenReturn(userMapper.fromDTO(userDTO));
         assertThrows(RuntimeException.class, () -> userController.createUser(userDTO));
         verify(userService, times(0)).createUser(any());
     }
@@ -53,7 +50,6 @@ public class UserControllerTest {
     @Test
     public void testControllerPhoneNumberWrongExtension() {
         UserDTO userDTO = new UserDTO(UUID.randomUUID(), "davidmontano1113@icesi.edu.co", "+233222050551", "David", "Montano", LocalTime.now());
-        when(userService.createUser(any())).thenReturn(userMapper.fromDTO(userDTO));
         assertThrows(RuntimeException.class, () -> userController.createUser(userDTO));
         verify(userService, times(0)).createUser(any());
     }
@@ -61,7 +57,6 @@ public class UserControllerTest {
     @Test
     public void testControllerPhoneNumberWithSpaces() {
         UserDTO userDTO = new UserDTO(UUID.randomUUID(), "davidmontano1113@icesi.edu.co", "+57322 205 0551", "David", "Montano", LocalTime.now());
-        when(userService.createUser(any())).thenReturn(userMapper.fromDTO(userDTO));
         assertThrows(RuntimeException.class, () -> userController.createUser(userDTO));
         verify(userService, times(0)).createUser(any());
     }
@@ -69,7 +64,6 @@ public class UserControllerTest {
     @Test
     public void testControllerPhoneNumberNotValid() {
         UserDTO userDTO = new UserDTO(UUID.randomUUID(), "davidmontano1113@icesi.edu.co", "+5732220505512321", "David", "Montano", LocalTime.now());
-        when(userService.createUser(any())).thenReturn(userMapper.fromDTO(userDTO));
         assertThrows(RuntimeException.class, () -> userController.createUser(userDTO));
         verify(userService, times(0)).createUser(any());
     }
@@ -78,15 +72,22 @@ public class UserControllerTest {
     public void testControllerEmailNull() {
         UserDTO userDTO = new UserDTO(UUID.randomUUID(), null, "+573222050551", "David", "Montano", LocalTime.now());
         when(userService.createUser(any())).thenReturn(userMapper.fromDTO(userDTO));
-        userService.createUser(userMapper.fromDTO(userDTO));
+        userController.createUser(userDTO);
         verify(userService, times(1)).createUser(any());
+    }
+
+    @Test
+    public void testControllerPhoneAndEmailNull() {
+        UserDTO userDTO = new UserDTO(UUID.randomUUID(), null, null, "David", "Montano", LocalTime.now());
+        assertThrows(RuntimeException.class, () -> userController.createUser(userDTO));
+        verify(userService, times(0)).createUser(any());
     }
 
     @Test
     public void testControllerPhoneNumberNull() {
         UserDTO userDTO = new UserDTO(UUID.randomUUID(), "davidmontano1113@icesi.edu.co", null, "David", "Montano", LocalTime.now());
         when(userService.createUser(any())).thenReturn(userMapper.fromDTO(userDTO));
-        userService.createUser(userMapper.fromDTO(userDTO));
+        userController.createUser(userDTO);
         verify(userService, times(1)).createUser(any());
     }
 
@@ -95,7 +96,6 @@ public class UserControllerTest {
         UserDTO userDTO = new UserDTO(UUID.randomUUID(), "davidmontano1113@icesi.edu.co", "+573222050551",
                 "1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901",
                 "Montano", LocalTime.now());
-        when(userService.createUser(any())).thenReturn(userMapper.fromDTO(userDTO));
         assertThrows(RuntimeException.class, () -> userController.createUser(userDTO));
         verify(userService, times(0)).createUser(any());
     }
@@ -105,7 +105,6 @@ public class UserControllerTest {
         UserDTO userDTO = new UserDTO(UUID.randomUUID(), "davidmontano1113@icesi.edu.co", "+573222050551", "David",
                 "1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901",
                 LocalTime.now());
-        when(userService.createUser(any())).thenReturn(userMapper.fromDTO(userDTO));
         assertThrows(RuntimeException.class, () -> userController.createUser(userDTO));
         verify(userService, times(0)).createUser(any());
     }
@@ -113,7 +112,6 @@ public class UserControllerTest {
     @Test
     public void testControllerFirstNameSpecialCharacters() {
         UserDTO userDTO = new UserDTO(UUID.randomUUID(), "davidmontano1113@icesi.edu.co", "+573222050551", "Dav-id", "Montano", LocalTime.now());
-        when(userService.createUser(any())).thenReturn(userMapper.fromDTO(userDTO));
         assertThrows(RuntimeException.class, () -> userController.createUser(userDTO));
         verify(userService, times(0)).createUser(any());
     }
@@ -121,7 +119,6 @@ public class UserControllerTest {
     @Test
     public void testControllerLastNameSpecialCharacters() {
         UserDTO userDTO = new UserDTO(UUID.randomUUID(), "davidmontano1113@icesi.edu.co", "+573222050551", "David", "Mon-tano", LocalTime.now());
-        when(userService.createUser(any())).thenReturn(userMapper.fromDTO(userDTO));
         assertThrows(RuntimeException.class, () -> userController.createUser(userDTO));
         verify(userService, times(0)).createUser(any());
     }
