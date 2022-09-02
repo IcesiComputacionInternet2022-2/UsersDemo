@@ -9,7 +9,6 @@ import java.util.UUID;
 
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
 public class UserDTO {
 
     private UUID id;
@@ -23,4 +22,8 @@ public class UserDTO {
     private String lastName;
 
     private LocalTime localTime;
+
+    public UserDTO() {
+        localTime = LocalTime.now();
+    }
 }
