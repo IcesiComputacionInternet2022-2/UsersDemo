@@ -28,7 +28,7 @@ public class UserServiceImpl implements UserService {
         boolean isEmailRepeated = getUsers().stream().anyMatch(user -> user.getEmail().equals(userDTO.getEmail()));
         boolean isPhoneRepeated = getUsers().stream().anyMatch(user -> user.getPhoneNumber().equals(userDTO.getPhoneNumber()));
 
-        if (isEmailRepeated && isPhoneRepeated)
+        if (isEmailRepeated || isPhoneRepeated)
             throw new RuntimeException();
         else return userRepository.save(userDTO);
     }
