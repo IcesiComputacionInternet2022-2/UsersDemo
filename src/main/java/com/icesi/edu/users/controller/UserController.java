@@ -9,8 +9,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @RestController
@@ -40,7 +38,7 @@ public class UserController implements UserAPI {
     }
 
     //Email Validation
-    private boolean isEmailCorrect (String email) {return email.matches("^\\w+@icesi\\.edu\\.co$");}
+    private boolean isEmailCorrect (String email) {return email.matches("^[a-z]+@icesi\\.edu\\.co$");}
     //===================================================================================
 
     //Phone Validation
@@ -49,7 +47,7 @@ public class UserController implements UserAPI {
     //===================================================================================
 
     //Name Validation
-    private boolean isFirstnameCorrect (String firstName) {return firstName.matches("^^([a-zA-Z]\\s?){1,120}$");}
+    private boolean isFirstnameCorrect (String firstName) {return firstName.matches("^([a-zA-Z]\\s?){1,120}$");}
 
     private boolean isLastnameCorrect (String lastName) {return lastName.matches("^([a-zA-Z]\\s?){1,120}$");}
 
