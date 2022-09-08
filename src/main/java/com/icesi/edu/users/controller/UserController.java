@@ -2,9 +2,12 @@ package com.icesi.edu.users.controller;
 
 import com.icesi.edu.users.api.UserAPI;
 import com.icesi.edu.users.dto.UserDTO;
+import com.icesi.edu.users.error.exceptions.UserDemoError;
+import com.icesi.edu.users.error.exceptions.UserDemoException;
 import com.icesi.edu.users.mapper.UserMapper;
 import com.icesi.edu.users.service.UserService;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -25,11 +28,11 @@ public class UserController implements UserAPI {
     }
 
     @Override
-    public UserDTO createUser(UserDTO userDTO) {
+    public UserDTO createUser(UserDTO userDTO) throws UserDemoException {
         String email = userDTO.getEmail(), phone = userDTO.getPhoneNumber();
         if (!(validDomain(email) && validEmail(email) && validCountryCode(phone) && validCPhone(phone) && emailOrPhone(phone, email) &&
         nameLength(userDTO.getFirstName(), userDTO.getLastName()) && validNameFormat(userDTO.getFirstName(), userDTO.getLastName())))
-            throw new RuntimeException("Invalid data");
+            throw new UserDemoException(HttpStatus.BAD_REQUEST, new UserDemoError("code", "message"));
         return userMapper.fromUser(userService.createUser(userMapper.fromDTO(userDTO)));
     }
 

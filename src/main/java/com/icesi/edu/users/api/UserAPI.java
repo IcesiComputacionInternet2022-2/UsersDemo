@@ -1,6 +1,7 @@
 package com.icesi.edu.users.api;
 
 import com.icesi.edu.users.dto.UserDTO;
+import com.icesi.edu.users.error.exceptions.UserDemoException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,7 +18,7 @@ public interface UserAPI {
     public UserDTO getUser(@PathVariable UUID userId);
 
     @PostMapping()
-    public UserDTO createUser(@RequestBody UserDTO userDTO);
+    public UserDTO createUser(@RequestBody UserDTO userDTO) throws UserDemoException;
 
     @GetMapping
     public List<UserDTO> getUsers();
