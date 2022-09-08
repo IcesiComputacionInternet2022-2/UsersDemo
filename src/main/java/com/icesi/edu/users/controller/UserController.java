@@ -44,7 +44,12 @@ public class UserController implements UserAPI {
     }
     private void verifyEmailDomain(String s) {
         if(s==null || !s.matches("[A-Za-z0-9._%+-]+@icesi+\\.+edu+\\.+co"))
-            throw new RuntimeException("El correo debe pertenecer al dominio @icesi.edu.co y no contener caracteres especiales");
+            throw new RuntimeException("El correo debe pertenecer al dominio @icesi.edu.co");
+    }
+
+    private void verifyEmailEspecialchars(String s) {
+        if(s==null || !s.matches("[A-Za-z0-9._%+-]+@+[A-Za-z.]"))
+            throw new RuntimeException("El correo  no contener caracteres especiales");
     }
 
     private void verifyPhoneNumberOpener(String ps) {

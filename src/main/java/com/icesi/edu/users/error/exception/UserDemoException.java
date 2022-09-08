@@ -8,6 +8,6 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 public class UserDemoException extends RuntimeException{
 
-    private HttpStatus hattpeStatus;
+    private HttpStatus httpStatus;
     private UserDemoError error;
 }

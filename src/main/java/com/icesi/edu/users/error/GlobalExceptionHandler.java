@@ -9,6 +9,6 @@ import org.springframework.stereotype.Controller;
 public class GlobalExceptionHandler {
 
     public ResponseEntity<UserDemoError> handleException(UserDemoException userDemoException){
-        return new ResponseEntity<>(userDemoException.getError(),userDemoException.getHattpeStatus());
+        return new ResponseEntity<>(userDemoException.getError(),userDemoException.getHttpStatus());
     }
 }
