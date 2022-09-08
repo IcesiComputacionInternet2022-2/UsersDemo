@@ -49,7 +49,7 @@ public class UserController implements UserAPI {
     }
 
     private boolean validateEmail(String userEmail) {
-        if (!userEmail.matches("\\w+@icesi\\.edu\\.co$"))
+        if (!userEmail.matches("\\w+\\.?\\w+@icesi\\.edu\\.co$"))
             throw new UserDemoException(HttpStatus.BAD_REQUEST, new UserDemoError("02", ErrorConstants.CODE_UD_02));
         return true;
     }
