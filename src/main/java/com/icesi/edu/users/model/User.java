@@ -10,7 +10,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 
@@ -34,8 +34,12 @@ public class User {
 
     private String lastName;
 
+    private LocalDateTime localDateTime;
+
     @PrePersist
     public void generateId(){
         this.id = UUID.randomUUID();
     }
+
+
 }
