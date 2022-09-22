@@ -7,6 +7,7 @@ import com.icesi.edu.users.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -25,7 +26,7 @@ public class UserController implements UserAPI {
     }
 
     @Override
-    public UserDTO createUser(UserDTO userDTO) {
+    public UserDTO createUser(@Valid UserDTO userDTO) {
         return userMapper.fromUser(userService.createUser(userMapper.fromDTO(userDTO)));
     }
 
@@ -33,4 +34,5 @@ public class UserController implements UserAPI {
     public List<UserDTO> getUsers() {
         return userService.getUsers().stream().map(userMapper::fromUser).collect(Collectors.toList());
     }
+
 }
