@@ -2,15 +2,18 @@ package com.icesi.edu.users.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.icesi.edu.users.dto.UserDTO;
+import com.icesi.edu.users.integration.config.InitialDataConfig;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
@@ -32,7 +35,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration
 @SpringBootTest(
-        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+        properties = { "spring.datasource.url=jdbc:h2:mem:testdb" }
+)
+@Import({InitialDataConfig.class})
+@ActiveProfiles("test")
 public class UserDemoIntegrationTests {
 
     private MockMvc mockMvc;
@@ -41,6 +48,8 @@ public class UserDemoIntegrationTests {
     private WebApplicationContext wac;
 
     private ObjectMapper objectMapper;
+
+    private static final String USER_UUID = "5631cbd3-cf53-415f-bd06-4e995ee3c322";
 
 
     @BeforeEach
@@ -52,10 +61,27 @@ public class UserDemoIntegrationTests {
     @Test
     @SneakyThrows
     public void createUserSuccessfully() {
-        String body = parseResourceToString("createUser.json");
+        UserDTO baseUser = baseUser();
+        baseUser.setEmail("invalidEmail@invalid");
+        String body = objectMapper.writeValueAsString(baseUser);
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body)).andExpect(status().isOk())
+                .andReturn();
+
+        UserDTO userResult = objectMapper.readValue(result.getResponse().getContentAsString(), UserDTO.class);
+     //   UserError userError = objectMapper.readValue(result.getResponse().getContentAsString(), UserError.class);
+        assertThat(userResult, hasProperty("firstName", is("Juan")));
+
+    }
+
+    @Test
+    @SneakyThrows
+    public void getUserSuccessfully() {
+
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/users/" + USER_UUID)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
                 .andReturn();
 
         UserDTO userResult = objectMapper.readValue(result.getResponse().getContentAsString(), UserDTO.class);
@@ -64,6 +90,12 @@ public class UserDemoIntegrationTests {
 
     }
 
+
+    @SneakyThrows
+    private UserDTO baseUser(){
+        String body = parseResourceToString("createUser.json");
+        return objectMapper.readValue(body, UserDTO.class);
+    }
     @SneakyThrows
     private String parseResourceToString(String classPath) {
         Resource resource = new ClassPathResource(classPath);
