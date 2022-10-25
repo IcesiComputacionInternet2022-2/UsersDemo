@@ -2,9 +2,12 @@ package com.icesi.edu.users.controller;
 
 import com.icesi.edu.users.api.UserAPI;
 import com.icesi.edu.users.dto.UserDTO;
+import com.icesi.edu.users.error.exception.UserDemoError;
+import com.icesi.edu.users.error.exception.UserDemoException;
 import com.icesi.edu.users.mapper.UserMapper;
 import com.icesi.edu.users.service.UserService;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -38,7 +41,7 @@ public class UserController implements UserAPI {
             checkNumber(userDTO.getPhoneNumber());
             return userMapper.fromUser(userService.createUser(userMapper.fromDTO(userDTO)));
         }//End if
-        throw new RuntimeException();
+        throw new UserDemoException(HttpStatus.BAD_REQUEST, new UserDemoError("Code","message"));
     }//End UserDTO
 
     @Override
