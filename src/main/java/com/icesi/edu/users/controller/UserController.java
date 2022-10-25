@@ -1,6 +1,7 @@
 package com.icesi.edu.users.controller;
 
 import com.icesi.edu.users.api.UserAPI;
+import com.icesi.edu.users.dto.UserCreateDTO;
 import com.icesi.edu.users.dto.UserDTO;
 import com.icesi.edu.users.mapper.UserMapper;
 import com.icesi.edu.users.service.UserService;
@@ -26,7 +27,7 @@ public class UserController implements UserAPI {
     }
 
     @Override
-    public UserDTO createUser(@Valid UserDTO userDTO) {
+    public UserDTO createUser(@Valid UserCreateDTO userDTO) {
         return userMapper.fromUser(userService.createUser(userMapper.fromDTO(userDTO)));
     }
 

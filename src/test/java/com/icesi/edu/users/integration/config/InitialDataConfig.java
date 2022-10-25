@@ -13,7 +13,7 @@ import javax.sql.DataSource;
 @Configuration
 public class InitialDataConfig {
 
-    @Autowired
+   // @Autowired
     public void configureInitialData(DataSource dataSource, SpringLiquibase liquibase) {
         ResourceDatabasePopulator resourceDatabasePopulator = new ResourceDatabasePopulator();
         resourceDatabasePopulator.addScript(new ClassPathResource("/data.sql"));
