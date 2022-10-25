@@ -37,7 +37,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class userDemoIntegrationTests {
-    private MockMvc mockMvc;
+    /*private MockMvc mockMvc;
 
     @Autowired
     private WebApplicationContext wac;
@@ -67,5 +67,5 @@ public class userDemoIntegrationTests {
         try(Reader reader = new InputStreamReader(resource.getInputStream(), UTF_8)){
             return FileCopyUtils.copyToString(reader);
         }
-    }
+    }*/
 }//End userDemoIntegrationTests
