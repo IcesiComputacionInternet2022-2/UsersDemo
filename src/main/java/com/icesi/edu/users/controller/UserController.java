@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -29,7 +30,7 @@ public class UserController implements UserAPI {
     }
 
     @Override
-    public UserDTO createUser(UserDTO userDTO) {
+    public UserDTO createUser(@Valid UserDTO userDTO) {
         if(userDTO.getFirstName() != null && userDTO.getLastName() != null){
             verifyStringLength(userDTO.getFirstName());
             verifyStringLength(userDTO.getLastName());
