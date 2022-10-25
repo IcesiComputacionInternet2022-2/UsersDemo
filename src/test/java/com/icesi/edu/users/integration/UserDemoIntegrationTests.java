@@ -38,7 +38,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
         properties = { "spring.datasource.url=jdbc:h2:mem:testdb" }
 )
-@Import({InitialDataConfig.class})
 @ActiveProfiles("test")
 public class UserDemoIntegrationTests {
 
