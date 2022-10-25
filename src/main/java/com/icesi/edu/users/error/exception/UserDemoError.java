@@ -1,10 +1,13 @@
 package com.icesi.edu.users.error.exception;
 
-import lombok.Data;
+import com.icesi.edu.users.error.constants.ErrorCode;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
-@Data
+@Getter
+@AllArgsConstructor
 public class UserDemoError {
 
-    private String code;
+    private ErrorCode code;
     private String message;
 }

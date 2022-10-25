@@ -1,16 +1,18 @@
 package com.icesi.edu.users.controller;
 
 import com.icesi.edu.users.dto.UserDTO;
+import com.icesi.edu.users.error.constants.ErrorCode;
+import com.icesi.edu.users.error.exception.UserDemoException;
 import com.icesi.edu.users.mapper.UserMapper;
 import com.icesi.edu.users.mapper.UserMapperImpl;
 import com.icesi.edu.users.model.User;
-import com.icesi.edu.users.repository.UserRepository;
 import com.icesi.edu.users.service.UserService;
 import com.icesi.edu.users.service.impl.UserServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import org.mockito.ArgumentMatchers;
+import org.springframework.http.HttpStatus;
 
 import java.util.ArrayList;
 
@@ -19,20 +21,16 @@ import static org.mockito.Mockito.when;
 
 public class UserControllerTest {
 
-    private UserRepository userRepository;
-
     private UserService userService;
 
     private UserController userController;
-
-    private UserMapper userMapper;
 
 
     @BeforeEach
     public void init(){
         userService = mock(UserServiceImpl.class);
-        userMapper = new UserMapperImpl();
-        userController = new UserController(userService,userMapper);
+        UserMapper userMapper = new UserMapperImpl();
+        userController = new UserController(userService, userMapper);
 
         when(userService.createUser(ArgumentMatchers.any())).thenReturn(new User(null,"example@u.icesi.edu.co","+573161234567","Pepito","Perez"));
 
@@ -54,7 +52,7 @@ public class UserControllerTest {
 
     @Test
     public void testGetUsers(){
-        when(userService.getUsers()).thenReturn(new ArrayList<User>());
+        when(userService.getUsers()).thenReturn(new ArrayList<>());
 
         assertTrue(userController.getUsers().isEmpty());
     }
@@ -64,32 +62,32 @@ public class UserControllerTest {
         UserDTO userDTO = new UserDTO();
         userDTO.setFirstName("");
 
-        RuntimeException thrown =
-                assertThrows(RuntimeException.class, () -> {
-                    userController.createUser(userDTO);
-                }, "RuntimeException expected");
+        UserDemoException thrown =
+                assertThrows(UserDemoException.class, () ->
+                    userController.createUser(userDTO)
+                , "RuntimeException expected");
 
-        assertEquals(thrown.getMessage(),"Incorrect attributes format and/or values");
+        assertEquals(ErrorCode.CODE_01, thrown.getError().getCode());
+        assertEquals(HttpStatus.BAD_REQUEST, thrown.getHttpStatus());
+        assertEquals(ErrorCode.CODE_01.getMessage(), thrown.getError().getMessage());
+
+
     }
 
     @Test
     public void testVerifyFirstNameLengthLessThan120(){
         UserDTO userDTO = new UserDTO();
 
-        String firstName = "";
+        userDTO.setFirstName("a".repeat(121));
 
-        for(int i=0; i < 121; i++){
-            firstName += "a";
-        }
+        UserDemoException thrown =
+                assertThrows(UserDemoException.class, () ->
+                    userController.createUser(userDTO)
+                , "RuntimeException expected");
 
-        userDTO.setFirstName(firstName);
-
-        RuntimeException thrown =
-                assertThrows(RuntimeException.class, () -> {
-                    userController.createUser(userDTO);
-                }, "RuntimeException expected");
-
-        assertEquals(thrown.getMessage(),"Incorrect attributes format and/or values");
+        assertEquals(ErrorCode.CODE_01, thrown.getError().getCode());
+        assertEquals(HttpStatus.BAD_REQUEST, thrown.getHttpStatus());
+        assertEquals(ErrorCode.CODE_01.getMessage(), thrown.getError().getMessage());
 
     }
 
@@ -99,12 +97,14 @@ public class UserControllerTest {
 
         userDTO.setFirstName("Pe--it&^_");
 
-        RuntimeException thrown =
-                assertThrows(RuntimeException.class, () -> {
-                    userController.createUser(userDTO);
-                }, "RuntimeException expected");
+        UserDemoException thrown =
+                assertThrows(UserDemoException.class, () ->
+                    userController.createUser(userDTO)
+                , "RuntimeException expected");
 
-        assertEquals(thrown.getMessage(),"Incorrect attributes format and/or values");
+        assertEquals(ErrorCode.CODE_01, thrown.getError().getCode());
+        assertEquals(HttpStatus.BAD_REQUEST, thrown.getHttpStatus());
+        assertEquals(ErrorCode.CODE_01.getMessage(), thrown.getError().getMessage());
 
     }
 
@@ -115,33 +115,31 @@ public class UserControllerTest {
         userDTO.setFirstName("Juan");
         userDTO.setLastName("");
 
-        RuntimeException thrown =
-                assertThrows(RuntimeException.class, () -> {
-                    userController.createUser(userDTO);
-                }, "RuntimeException expected");
+        UserDemoException thrown =
+                assertThrows(UserDemoException.class, () ->
+                                userController.createUser(userDTO)
+                        , "RuntimeException expected");
 
-        assertEquals(thrown.getMessage(),"Incorrect attributes format and/or values");
+        assertEquals(ErrorCode.CODE_01, thrown.getError().getCode());
+        assertEquals(HttpStatus.BAD_REQUEST, thrown.getHttpStatus());
+        assertEquals(ErrorCode.CODE_01.getMessage(), thrown.getError().getMessage());
     }
 
     @Test
     public void testVerifyLastNameLengthLessThan120(){
         UserDTO userDTO = new UserDTO();
 
-        String lastName = "";
-
-        for(int i=0; i < 121; i++){
-            lastName += "a";
-        }
-
         userDTO.setFirstName("Juan");
-        userDTO.setLastName(lastName);
+        userDTO.setLastName("a".repeat(121));
 
-        RuntimeException thrown =
-                assertThrows(RuntimeException.class, () -> {
-                    userController.createUser(userDTO);
-                }, "RuntimeException expected");
+        UserDemoException thrown =
+                assertThrows(UserDemoException.class, () ->
+                                userController.createUser(userDTO)
+                        , "RuntimeException expected");
 
-        assertEquals(thrown.getMessage(),"Incorrect attributes format and/or values");
+        assertEquals(ErrorCode.CODE_01, thrown.getError().getCode());
+        assertEquals(HttpStatus.BAD_REQUEST, thrown.getHttpStatus());
+        assertEquals(ErrorCode.CODE_01.getMessage(), thrown.getError().getMessage());
 
     }
 
@@ -152,12 +150,14 @@ public class UserControllerTest {
         userDTO.setFirstName("Juan");
         userDTO.setLastName("Pe--it&^_");
 
-        RuntimeException thrown =
-                assertThrows(RuntimeException.class, () -> {
-                    userController.createUser(userDTO);
-                }, "RuntimeException expected");
+        UserDemoException thrown =
+                assertThrows(UserDemoException.class,
+                            () -> userController.createUser(userDTO)
+                            , "RuntimeException expected");
 
-        assertEquals(thrown.getMessage(),"Incorrect attributes format and/or values");
+        assertEquals(ErrorCode.CODE_01, thrown.getError().getCode());
+        assertEquals(HttpStatus.BAD_REQUEST, thrown.getHttpStatus());
+        assertEquals(ErrorCode.CODE_01.getMessage(), thrown.getError().getMessage());
 
     }
 
@@ -165,12 +165,14 @@ public class UserControllerTest {
     public void testVerifyContactInfoBothNull(){
         UserDTO userDTO = new UserDTO(null,null,null,"Juan","Perez",null);
 
-        RuntimeException thrown =
-                assertThrows(RuntimeException.class, () -> {
-                    userController.createUser(userDTO);
-                }, "RuntimeException expected");
+        UserDemoException thrown =
+                assertThrows(UserDemoException.class,
+                        () -> userController.createUser(userDTO)
+                        , "RuntimeException expected");
 
-        assertEquals(thrown.getMessage(),"Incorrect attributes format and/or values");
+        assertEquals(ErrorCode.CODE_01, thrown.getError().getCode());
+        assertEquals(HttpStatus.BAD_REQUEST, thrown.getHttpStatus());
+        assertEquals(ErrorCode.CODE_01.getMessage(), thrown.getError().getMessage());
     }
 
     @Test
@@ -203,24 +205,28 @@ public class UserControllerTest {
     public void testVerifyEmailFormat(){
         UserDTO userDTO = new UserDTO(null,"exa mple@ices@i.edu.co","+573161234567","Juan","Perez",null);
 
-        RuntimeException thrown =
-                assertThrows(RuntimeException.class, () -> {
-                    userController.createUser(userDTO);
-                }, "RuntimeException expected");
+        UserDemoException thrown =
+                assertThrows(UserDemoException.class,
+                        () -> userController.createUser(userDTO)
+                        , "RuntimeException expected");
 
-        assertEquals(thrown.getMessage(),"Incorrect attributes format and/or values");
+        assertEquals(ErrorCode.CODE_01, thrown.getError().getCode());
+        assertEquals(HttpStatus.BAD_REQUEST, thrown.getHttpStatus());
+        assertEquals(ErrorCode.CODE_01.getMessage(), thrown.getError().getMessage());
     }
 
     @Test
     public void testVerifyEmailDomain(){
         UserDTO userDTO = new UserDTO(null,"example@univalle.edu.co","+573161234567","Juan","Perez",null);
 
-        RuntimeException thrown =
-                assertThrows(RuntimeException.class, () -> {
-                    userController.createUser(userDTO);
-                }, "RuntimeException expected");
+        UserDemoException thrown =
+                assertThrows(UserDemoException.class,
+                        () -> userController.createUser(userDTO)
+                        , "RuntimeException expected");
 
-        assertEquals(thrown.getMessage(),"Incorrect attributes format and/or values");
+        assertEquals(ErrorCode.CODE_01, thrown.getError().getCode());
+        assertEquals(HttpStatus.BAD_REQUEST, thrown.getHttpStatus());
+        assertEquals(ErrorCode.CODE_01.getMessage(), thrown.getError().getMessage());
 
     }
 
@@ -228,12 +234,14 @@ public class UserControllerTest {
     public void testVerifyEmailValidCharacters(){
         UserDTO userDTO = new UserDTO(null,"ex#$%am ple@icesi.edu.co","+573161234567","Juan","Perez",null);
 
-        RuntimeException thrown =
-                assertThrows(RuntimeException.class, () -> {
-                    userController.createUser(userDTO);
-                }, "RuntimeException expected");
+        UserDemoException thrown =
+                assertThrows(UserDemoException.class,
+                        () -> userController.createUser(userDTO)
+                        , "RuntimeException expected");
 
-        assertEquals(thrown.getMessage(),"Incorrect attributes format and/or values");
+        assertEquals(ErrorCode.CODE_01, thrown.getError().getCode());
+        assertEquals(HttpStatus.BAD_REQUEST, thrown.getHttpStatus());
+        assertEquals(ErrorCode.CODE_01.getMessage(), thrown.getError().getMessage());
 
     }
 
@@ -241,36 +249,42 @@ public class UserControllerTest {
     public void testVerifyPhoneNumberLength(){
         UserDTO userDTO = new UserDTO(null,"example@icesi.edu.co","+57316123","Juan","Perez",null);
 
-        RuntimeException thrown =
-                assertThrows(RuntimeException.class, () -> {
-                    userController.createUser(userDTO);
-                }, "RuntimeException expected");
+        UserDemoException thrown =
+                assertThrows(UserDemoException.class,
+                        () -> userController.createUser(userDTO)
+                        , "RuntimeException expected");
 
-        assertEquals(thrown.getMessage(),"Incorrect attributes format and/or values");
+        assertEquals(ErrorCode.CODE_01, thrown.getError().getCode());
+        assertEquals(HttpStatus.BAD_REQUEST, thrown.getHttpStatus());
+        assertEquals(ErrorCode.CODE_01.getMessage(), thrown.getError().getMessage());
     }
 
     @Test
     public void testVerifyPhoneNumberCountryCode(){
         UserDTO userDTO = new UserDTO(null,"example@icesi.edu.co","+633161234567","Juan","Perez",null);
 
-        RuntimeException thrown =
-                assertThrows(RuntimeException.class, () -> {
-                    userController.createUser(userDTO);
-                }, "RuntimeException expected");
+        UserDemoException thrown =
+                assertThrows(UserDemoException.class,
+                        () -> userController.createUser(userDTO)
+                        , "RuntimeException expected");
 
-        assertEquals(thrown.getMessage(),"Incorrect attributes format and/or values");
+        assertEquals(ErrorCode.CODE_01, thrown.getError().getCode());
+        assertEquals(HttpStatus.BAD_REQUEST, thrown.getHttpStatus());
+        assertEquals(ErrorCode.CODE_01.getMessage(), thrown.getError().getMessage());
     }
 
     @Test
     public void testVerifyPhoneNumberValidCharacters(){
         UserDTO userDTO = new UserDTO(null,"example@icesi.edu.co","+57316$%34567","Juan","Perez",null);
 
-        RuntimeException thrown =
-                assertThrows(RuntimeException.class, () -> {
-                    userController.createUser(userDTO);
-                }, "RuntimeException expected");
+        UserDemoException thrown =
+                assertThrows(UserDemoException.class,
+                        () -> userController.createUser(userDTO)
+                        , "RuntimeException expected");
 
-        assertEquals(thrown.getMessage(),"Incorrect attributes format and/or values");
+        assertEquals(ErrorCode.CODE_01, thrown.getError().getCode());
+        assertEquals(HttpStatus.BAD_REQUEST, thrown.getHttpStatus());
+        assertEquals(ErrorCode.CODE_01.getMessage(), thrown.getError().getMessage());
 
     }
 
@@ -278,12 +292,14 @@ public class UserControllerTest {
     public void testVerifyPhoneNumberSpaces(){
         UserDTO userDTO = new UserDTO(null,"example@icesi.edu.co","+573161 34567","Juan","Perez",null);
 
-        RuntimeException thrown =
-                assertThrows(RuntimeException.class, () -> {
-                    userController.createUser(userDTO);
-                }, "RuntimeException expected");
+        UserDemoException thrown =
+                assertThrows(UserDemoException.class,
+                        () -> userController.createUser(userDTO)
+                        , "RuntimeException expected");
 
-        assertEquals(thrown.getMessage(),"Incorrect attributes format and/or values");
+        assertEquals(ErrorCode.CODE_01, thrown.getError().getCode());
+        assertEquals(HttpStatus.BAD_REQUEST, thrown.getHttpStatus());
+        assertEquals(ErrorCode.CODE_01.getMessage(), thrown.getError().getMessage());
     }
 
 

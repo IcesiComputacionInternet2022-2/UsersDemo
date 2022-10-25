@@ -2,15 +2,20 @@ package com.icesi.edu.users.controller;
 
 import com.icesi.edu.users.api.UserAPI;
 import com.icesi.edu.users.dto.UserDTO;
+import com.icesi.edu.users.error.exception.UserDemoError;
+import com.icesi.edu.users.error.exception.UserDemoException;
 import com.icesi.edu.users.mapper.UserMapper;
-import com.icesi.edu.users.model.User;
 import com.icesi.edu.users.service.UserService;
 import lombok.AllArgsConstructor;
+import lombok.SneakyThrows;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
+import static com.icesi.edu.users.error.constants.ErrorCode.CODE_01;
 
 @RestController
 @AllArgsConstructor
@@ -26,12 +31,13 @@ public class UserController implements UserAPI {
     }
 
     @Override
+    @SneakyThrows
     public UserDTO createUser(UserDTO userDTO) {
         if(verifyFirstName(userDTO) && verifyLastName(userDTO) && verifyContactInfo(userDTO)){
             return userMapper.fromUser(userService.createUser(userMapper.fromDTO(userDTO)));
         }
         else{
-            throw new RuntimeException("Incorrect attributes format and/or values");
+            throw new UserDemoException(HttpStatus.BAD_REQUEST, new UserDemoError(CODE_01,CODE_01.getMessage()));
         }
     }
 
