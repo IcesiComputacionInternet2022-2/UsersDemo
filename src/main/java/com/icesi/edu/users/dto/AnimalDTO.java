@@ -9,7 +9,7 @@ import java.util.UUID;
 @Data
 @AllArgsConstructor
 //@NoArgsConstructor
-public class UserDTO {
+public class AnimalDTO {
 
     private UUID id;
 
@@ -21,10 +21,9 @@ public class UserDTO {
 
     private String lastName;
 
-
     private LocalDateTime dateCalled;
 
-    public UserDTO(){
+    public AnimalDTO(){
         dateCalled = LocalDateTime.now();
     }
 }

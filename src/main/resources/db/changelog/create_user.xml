@@ -6,7 +6,7 @@
 
     <changeSet id="33d4e9bc-7210-47c3-9617-c56ab7c0750d" author="juan.prada" failOnError="true">
 
-        <createTable tableName="user">
+        <createTable tableName="animal">
             <column name="id" type="UUID">
                 <constraints nullable="false" primaryKey="true" />
             </column>

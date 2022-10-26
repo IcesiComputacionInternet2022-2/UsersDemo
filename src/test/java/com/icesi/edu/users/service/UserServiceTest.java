@@ -1,8 +1,9 @@
 package com.icesi.edu.users.service;
 
-import com.icesi.edu.users.model.User;
-import com.icesi.edu.users.repository.UserRepository;
-import com.icesi.edu.users.service.impl.UserServiceImpl;
+import com.icesi.edu.users.error.exception.UserDemoException;
+import com.icesi.edu.users.model.Animal;
+import com.icesi.edu.users.repository.AnimalRepository;
+import com.icesi.edu.users.service.impl.AnimalServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
@@ -17,24 +18,24 @@ import static org.mockito.Mockito.when;
 
 public class UserServiceTest {
 
-    private User testNewUserToAdd;
+    private Animal testNewUserToAdd;
 
-    private UserRepository userRepository;
+    private AnimalRepository userRepository;
 
-    private UserService userService;
+    private AnimalService userService;
 
 
     @BeforeEach
     public void init(){
-        userRepository = mock(UserRepository.class);
-        userService = new UserServiceImpl(userRepository);
+        userRepository = mock(AnimalRepository.class);
+        userService = new AnimalServiceImpl(userRepository);
     }
 
 
     private void createUsers(){
-        List<User> usersTest = new ArrayList<>();
-        User user1= new User(null,"gustavo@icesi.edu.co","+573108724713","Gustavo","Adolfo");
-        User user2= new User(null,"emailRepeated@icesi.edu.co","+573225286612","Wanda","Villacorte");
+        List<Animal> usersTest = new ArrayList<>();
+        Animal user1= new Animal(null,"gustavo@icesi.edu.co","+573108724713","Gustavo","Adolfo");
+        Animal user2= new Animal(null,"emailRepeated@icesi.edu.co","+573225286612","Wanda","Villacorte");
 
         usersTest.add(user1);
         usersTest.add(user2);
@@ -46,11 +47,11 @@ public class UserServiceTest {
     public void testCreateUser(){
 
 
-        testNewUserToAdd = new User(null,"gustavo@icesi.edu.co","+573201234567","Gustavo","Villada");
+        testNewUserToAdd = new Animal(null,"gustavo@icesi.edu.co","+573201234567","Gustavo","Villada");
 
         when(userRepository.save(ArgumentMatchers.any())).thenReturn(testNewUserToAdd);
 
-        User user = userService.createUser(testNewUserToAdd);
+        Animal user = userService.createUser(testNewUserToAdd);
         assertEquals(testNewUserToAdd,user);
     }
 
@@ -59,7 +60,7 @@ public class UserServiceTest {
 
         when(userRepository.findById(ArgumentMatchers.any())).thenReturn(Optional.empty());
 
-        User user = userService.getUser(null);
+        Animal user = userService.getUser(null);
         assertNull(user);
     }
 
@@ -67,8 +68,8 @@ public class UserServiceTest {
     @Test
     public void testGetUsers(){
 
-        when(userRepository.findAll()).thenReturn(new ArrayList<User>());
-        List<User> users = userService.getUsers();
+        when(userRepository.findAll()).thenReturn(new ArrayList<Animal>());
+        List<Animal> users = userService.getUsers();
         assertTrue(users.isEmpty());
     }
 
@@ -76,7 +77,7 @@ public class UserServiceTest {
     public void testVerifyRepeatedEmail(){
         createUsers();
 
-        testNewUserToAdd = new User(null,"emailRepeated@icesi.edu.co","+573201234567","Gustavo","Villada");
+        testNewUserToAdd = new Animal(null,"emailRepeated@icesi.edu.co","+573201234567","Gustavo","Villada");
 
         RuntimeException Exception = assertThrows(RuntimeException.class, () -> {userService.createUser(testNewUserToAdd);});
         assertEquals(Exception.getMessage(),"Throw new RuntimeException");
@@ -88,11 +89,11 @@ public class UserServiceTest {
     public void testVerifyEmailNotRepeated(){
         createUsers();
 
-        testNewUserToAdd = new User(null,"emailNotRepeated@icesi.edu.co","+573201234567","Gustavo","Villada");
+        testNewUserToAdd = new Animal(null,"emailNotRepeated@icesi.edu.co","+573201234567","Gustavo","Villada");
 
         when(userRepository.save(ArgumentMatchers.any())).thenReturn(testNewUserToAdd);
 
-        User user = userService.createUser(testNewUserToAdd);
+        Animal user = userService.createUser(testNewUserToAdd);
         assertEquals(testNewUserToAdd, user);
 
     }
@@ -101,10 +102,10 @@ public class UserServiceTest {
     public void testVerifyPhoneNumberRepeated(){
         createUsers();
 
-        testNewUserToAdd = new User(null,"numberRepeated@icesi.edu.co","+573108724713","Gustavo","Villada");
+        testNewUserToAdd = new Animal(null,"numberRepeated@icesi.edu.co","+573108724713","Gustavo","Villada");
 
-        RuntimeException Exception = assertThrows(RuntimeException.class, () -> {userService.createUser(testNewUserToAdd);});
-        assertEquals(Exception.getMessage(),"Throw new RuntimeException");
+        UserDemoException userException = assertThrows(UserDemoException.class, () -> {userService.createUser(testNewUserToAdd);});
+        assertEquals(userException.getError().getMessage(),"Throw UserDemoException - Phone repeated in the database");
 
     }
 
@@ -112,11 +113,11 @@ public class UserServiceTest {
     public void testVerifyPhoneNumberNotRepeated(){
         createUsers();
 
-        testNewUserToAdd = new User(null,"numberNotRepeated@icesi.edu.co","+571234567890","Gustavo","Villada");
+        testNewUserToAdd = new Animal(null,"numberNotRepeated@icesi.edu.co","+571234567890","Gustavo","Villada");
 
         when(userRepository.save(ArgumentMatchers.any())).thenReturn(testNewUserToAdd);
 
-        User user = userService.createUser(testNewUserToAdd);
+        Animal user = userService.createUser(testNewUserToAdd);
         assertEquals(testNewUserToAdd,user);
     }
 

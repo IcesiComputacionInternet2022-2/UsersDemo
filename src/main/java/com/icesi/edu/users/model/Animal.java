@@ -10,17 +10,16 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
-import java.util.Date;
 import java.util.UUID;
 
 
 @Data
-@Table(name = "`user`")
+@Table(name = "`animal`")
 @Entity
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class User {
+public class Animal {
 
     @Id
     @Type(type="org.hibernate.type.UUIDCharType")

@@ -1,6 +1,6 @@
 package com.icesi.edu.users.api;
 
-import com.icesi.edu.users.dto.UserDTO;
+import com.icesi.edu.users.dto.AnimalDTO;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -10,16 +10,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import java.util.List;
 import java.util.UUID;
 
-@RequestMapping("/users")
-public interface UserAPI {
+@RequestMapping("/animals")
+public interface AnimalAPI {
 
-    @GetMapping("/{userId}")
-    public UserDTO getUser(@PathVariable UUID userId);
+    @GetMapping("/{animalId}")
+    public AnimalDTO getAnimal(@PathVariable UUID animalId);
 
     @PostMapping()
-    public UserDTO createUser(@RequestBody UserDTO userDTO);
+    public AnimalDTO createAnimal(@RequestBody AnimalDTO animalDTO);
 
     @GetMapping
-    public List<UserDTO> getUsers();
+    public List<AnimalDTO> getAnimals();
 
 }
