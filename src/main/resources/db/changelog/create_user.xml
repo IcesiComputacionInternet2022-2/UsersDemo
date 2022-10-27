@@ -4,9 +4,8 @@
 
     <!-- Refer to https://docs.liquibase.com/change-types/community/create-table.html -->
 
-    <changeSet id="33d4e9bc-7210-47c3-9617-c56ab7c0750d" author="diego.hidalgo" failOnError="true">
-
-        <createTable tableName="user">
+    <changeSet id="9f8d1a20-0ba1-463e-a59c-f82846f00b89" author="diego.hidalgo" failOnError="true">
+        <createTable tableName="users">
             <column name="id" type="UUID">
                 <constraints nullable="false" primaryKey="true" />
             </column>

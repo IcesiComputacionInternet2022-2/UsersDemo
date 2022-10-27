@@ -25,6 +25,7 @@ public class LoginServiceImpl implements LoginService {
     @Override
     public TokenDTO login(LoginDTO loginDTO) {
         User user = StreamSupport.stream(userRepository.findAll().spliterator(), false)
+                .peek(u -> System.out.println(u.getEmail()))
                 .filter(u -> u.getEmail().equalsIgnoreCase(loginDTO.getEmail()) )
                 .filter(u -> u.getPassword().equalsIgnoreCase(loginDTO.getPassword()))
                 .findFirst()

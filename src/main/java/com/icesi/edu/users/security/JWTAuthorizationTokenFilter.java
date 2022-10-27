@@ -19,14 +19,17 @@
 
 package com.icesi.edu.users.security;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.icesi.edu.users.error.exception.UserError;
 import com.icesi.edu.users.error.exception.UserException;
 import com.icesi.edu.users.utils.JWTParser;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.MalformedJwtException;
+import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
@@ -42,6 +45,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static com.icesi.edu.users.constant.UserErrorCode.CODE_01;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @Component
 @Order(1)
@@ -69,13 +73,24 @@ public class JWTAuthorizationTokenFilter extends OncePerRequestFilter {
                 SecurityContextHolder.setUserContext(context);
                 filterChain.doFilter(request, response);
             } else {
-                throw new UserException(HttpStatus.UNAUTHORIZED, new UserError(CODE_01, CODE_01.getMessage()));
+                createUnauthorizedFilter(new UserException(HttpStatus.UNAUTHORIZED, new UserError(CODE_01, CODE_01.getMessage())), response);
             }
         } catch (JwtException e) {
-            System.out.println("Error verifying JWT token: " + e.getMessage());
+            createUnauthorizedFilter(new UserException(HttpStatus.UNAUTHORIZED, new UserError(CODE_01, CODE_01.getMessage())), response);
         } finally {
             SecurityContextHolder.clearContext();
         }
+    }
+
+    @SneakyThrows
+    private void createUnauthorizedFilter(UserException userException, HttpServletResponse response) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        UserError userError = userException.getUserError();
+        String msg = objectMapper.writeValueAsString(userError);
+        response.setStatus(userException.getHttpStatus().value());
+        response.setHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE);
+        response.getWriter().write(msg);
+        response.getWriter().flush();
     }
 
     private SecurityContext parseClaims(String jwtToken, Claims claims) {
