@@ -1,4 +1,4 @@
-package validations;
+package com.icesi.edu.users.validations;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;

@@ -5,8 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import validations.CustomAnnotations;
-
+import com.icesi.edu.users.validations.CustomAnnotations;
 import java.util.Date;
 import java.util.UUID;
 
