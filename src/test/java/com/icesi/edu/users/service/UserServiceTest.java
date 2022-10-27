@@ -28,11 +28,11 @@ public class UserServiceTest {
 
     private List<User> setUpUsersList() {
         List<User> users = new ArrayList<>();
-        users.add(new User(UUID.randomUUID(), "pepe.perez1@icesi.edu.co", "+573184952830", "Pepe", "Perez"));
-        users.add(new User(UUID.randomUUID(), "jose.rodriguez1@icesi.edu.co", "+573184952330", "Jose", "Rodriguez"));
-        users.add(new User(UUID.randomUUID(), "martin.suarez2@icesi.edu.co", "+573184959830", "Martin", "Suarez"));
-        users.add(new User(UUID.randomUUID(), "juan.sanchez@icesi.edu.co", "+573184959999", "Juan", "Sanchez"));
-        users.add(new User(UUID.randomUUID(), "maria.martinez1@icesi.edu.co", "+573184951234", "Maria", "Martinez"));
+        users.add(new User(UUID.randomUUID(), "pepe.perez1@icesi.edu.co", "" ,"+573184952830", "Pepe", "Perez"));
+        users.add(new User(UUID.randomUUID(), "jose.rodriguez1@icesi.edu.co", "" ,"+573184952330", "Jose", "Rodriguez"));
+        users.add(new User(UUID.randomUUID(), "martin.suarez2@icesi.edu.co", "" ,"+573184959830", "Martin", "Suarez"));
+        users.add(new User(UUID.randomUUID(), "juan.sanchez@icesi.edu.co", "" ,"+573184959999", "Juan", "Sanchez"));
+        users.add(new User(UUID.randomUUID(), "maria.martinez1@icesi.edu.co", "" ,"+573184951234", "Maria", "Martinez"));
         return users;
     }
 
@@ -43,7 +43,7 @@ public class UserServiceTest {
 
     @Test
     public void testAddCorrectUser() {
-        User toAdd = new User(UUID.randomUUID(), "pepe.perez1@icesi.edu.co", "+573184952830", "Pepe", "Perez");
+        User toAdd = new User(UUID.randomUUID(), "pepe.perez1@icesi.edu.co", "" ,"+573184952830", "Pepe", "Perez");
         when(userRepository.save(any())).thenReturn(toAdd);
         assertEquals(toAdd, userService.createUser(toAdd));
         verify(userRepository, times(1)).save(any());
@@ -61,14 +61,14 @@ public class UserServiceTest {
 
     private List<User> setUpListWithOneUser() {
         List<User> user = new ArrayList<>();
-        user.add(new User(UUID.randomUUID(), "pepe.perez1@icesi.edu.co", "+573184952830", "Pepe", "Perez"));
+        user.add(new User(UUID.randomUUID(), "pepe.perez1@icesi.edu.co", "" ,"+573184952830", "Pepe", "Perez"));
         return user;
     }
 
     @Test
     public void testVerifyAddUserWithRepeatedEmail1() {
         when(userRepository.findAll(any())).thenReturn(setUpListWithOneUser());
-        User toAdd = new User(UUID.randomUUID(), "pepe.perez1@icesi.edu.co", "+573184952123", "ElPepito", "Sanchez Perez");
+        User toAdd = new User(UUID.randomUUID(), "pepe.perez1@icesi.edu.co", "" ,"+573184952123", "ElPepito", "Sanchez Perez");
         assertThrows(RuntimeException.class, () -> userService.createUser(toAdd));
         verify(userRepository, times(0)).save(any());
     }
@@ -76,7 +76,7 @@ public class UserServiceTest {
     @Test
     public void testVerifyAddUserWithRepeatedPhoneNumber() {
         when(userRepository.findAll(any())).thenReturn(setUpListWithOneUser());
-        User toAdd = new User(UUID.randomUUID(), "sancho.panza@icesi.edu.co", "+573184952123", "ElPepito", "Sanchez Perez");
+        User toAdd = new User(UUID.randomUUID(), "sancho.panza@icesi.edu.co", "" ,"+573184952123", "ElPepito", "Sanchez Perez");
         assertThrows(RuntimeException.class, () -> userService.createUser(toAdd));
         verify(userRepository, times(0)).save(any());
     }
@@ -84,7 +84,7 @@ public class UserServiceTest {
     @Test
     public void testVerifyAddUserWithRepeatedEmailAndNumber() {
         when(userRepository.findAll(any())).thenReturn(setUpListWithOneUser());
-        User toAdd = new User(UUID.randomUUID(), "pepe.perez1@icesi.edu.co", "+573184952123", "ElPepito", "Sanchez Perez");
+        User toAdd = new User(UUID.randomUUID(), "pepe.perez1@icesi.edu.co", "" ,"+573184952123", "ElPepito", "Sanchez Perez");
         assertThrows(RuntimeException.class, () -> userService.createUser(toAdd));
         verify(userRepository, times(0)).save(any());
     }

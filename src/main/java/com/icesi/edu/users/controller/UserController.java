@@ -1,12 +1,16 @@
 package com.icesi.edu.users.controller;
 
 import com.icesi.edu.users.api.UserAPI;
+import com.icesi.edu.users.dto.UserCreateDTO;
 import com.icesi.edu.users.dto.UserDTO;
 import com.icesi.edu.users.mapper.UserMapper;
+import com.icesi.edu.users.security.JWTAuthorizationTokenFilter;
 import com.icesi.edu.users.service.UserService;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -33,7 +37,7 @@ public class UserController implements UserAPI {
     }
 
     @Override
-    public UserDTO createUser(UserDTO userDTO) {
+    public UserDTO createUser(@Valid UserCreateDTO userDTO) {
         if(checkUserNull(userDTO))
             throw new RuntimeException();
         String email, phoneNumber, firstName, lastName;
@@ -50,7 +54,7 @@ public class UserController implements UserAPI {
         throw new RuntimeException();
     }
 
-    private boolean checkUserNull(UserDTO userDTO) {
+    private boolean checkUserNull(UserCreateDTO userDTO) {
         return userDTO == null;
     }
 
