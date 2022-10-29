@@ -1,7 +1,6 @@
 package com.icesi.edu.users.service.impl;
 
 import com.icesi.edu.users.constant.ErrorConstants;
-import com.icesi.edu.users.dto.UserDTO;
 import com.icesi.edu.users.error.exception.UserDemoError;
 import com.icesi.edu.users.error.exception.UserDemoException;
 import com.icesi.edu.users.model.User;

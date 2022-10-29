@@ -6,14 +6,18 @@ import com.icesi.edu.users.dto.UserDTO;
 import com.icesi.edu.users.error.exception.UserDemoError;
 import com.icesi.edu.users.error.exception.UserDemoException;
 import com.icesi.edu.users.mapper.UserMapper;
+import com.icesi.edu.users.model.User;
+import com.icesi.edu.users.security.SecurityContextHolder;
 import com.icesi.edu.users.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @RestController
 @AllArgsConstructor
@@ -25,12 +29,16 @@ public class UserController implements UserAPI {
     private final String phoneExt = "+57";
 
     @Override
-    public UserDTO getUser(UUID userId) {
-        return userMapper.fromUser(userService.getUser(userId));
+    public User getUser(UUID userId) {
+        return Stream.ofNullable(userService.getUser(userId)).peek(user -> {
+            if (!user.getId().equals(SecurityContextHolder.getContext().getUserId()))
+                throw new UserDemoException(HttpStatus.UNAUTHORIZED, new UserDemoError(ErrorConstants.CODE_UD_12, ErrorConstants.CODE_UD_12.getMessage()));
+        }).findFirst().orElse(null);
     }
 
     @Override
-    public UserDTO createUser(UserDTO userDTO) {
+    public UserDTO createUser(@Valid User user) {
+        UserDTO userDTO = userMapper.fromUser(user);
         validateFieldsPhoneEmail(userDTO);
         validateEmailDomain(userDTO);
         validateEmailSpecialCharacters(userDTO);
@@ -39,7 +47,7 @@ public class UserController implements UserAPI {
         validatePhoneNumber(userDTO);
         validateNamesLength(userDTO);
         validateNamesSpecialCharacters(userDTO);
-        return userMapper.fromUser(userService.createUser(userMapper.fromDTO(userDTO)));
+        return userMapper.fromUser(userService.createUser(user));
     }
 
     private void validateFieldsPhoneEmail(UserDTO userDTO) {

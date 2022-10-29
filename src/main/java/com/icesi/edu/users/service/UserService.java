@@ -13,9 +13,9 @@ import java.util.UUID;
 public interface UserService {
 
 
-    public User getUser(@PathVariable UUID userId);
+    User getUser(@PathVariable UUID userId);
 
-    public User createUser(@RequestBody User userDTO);
+    User createUser(@RequestBody User userDTO);
 
-    public List<User> getUsers();
+    List<User> getUsers();
 }

@@ -1,6 +1,7 @@
 {
-  "email" : "juanprada@icesi.edu.co",
-  "phoneNumber" : "+573014743258",
-  "firstName" : "Juan",
-  "lastName" : "Prada"
+  "email": "juanprada@icesi.edu.co",
+  "phoneNumber": "+573014743258",
+  "firstName": "Juan",
+  "lastName": "Prada",
+  "password": "Pa$$w0rd"
 }

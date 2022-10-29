@@ -1,5 +1,6 @@
 package com.icesi.edu.users.model;
 
+import com.icesi.edu.users.validation.CustomAnnotations;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,7 +12,6 @@ import javax.persistence.Id;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import java.util.UUID;
-
 
 @Data
 @Table(name = "`user`")
@@ -32,6 +32,9 @@ public class User {
     private String firstName;
 
     private String lastName;
+
+    @CustomAnnotations.PasswordValidation
+    private String password;
 
     @PrePersist
     public void generateId(){
