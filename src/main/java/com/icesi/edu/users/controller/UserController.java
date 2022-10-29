@@ -1,13 +1,19 @@
 package com.icesi.edu.users.controller;
 
 import com.icesi.edu.users.api.UserAPI;
+import com.icesi.edu.users.constant.UserErrorCode;
 import com.icesi.edu.users.dto.UserCreateDTO;
 import com.icesi.edu.users.dto.UserDTO;
+import com.icesi.edu.users.error.exception.UserError;
+import com.icesi.edu.users.error.exception.UserException;
 import com.icesi.edu.users.mapper.UserMapper;
+import com.icesi.edu.users.model.User;
 import com.icesi.edu.users.security.JWTAuthorizationTokenFilter;
+import com.icesi.edu.users.security.SecurityContextHolder;
 import com.icesi.edu.users.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
@@ -15,6 +21,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static com.icesi.edu.users.constant.UserErrorCode.CODE_01;
 
 @RestController
 @AllArgsConstructor
@@ -29,11 +38,13 @@ public class UserController implements UserAPI {
     private final String NAME_REGEX = "^[a-zA-Z]+$";
 
     @Override
-    public UserDTO getUser(UUID userId) {
-        UserDTO foundUser = userMapper.fromUser(userService.getUser(userId));
-        if(foundUser != null)
-            foundUser.setRequestDate(new Date());
-        return foundUser;
+    public UserCreateDTO getUser(UUID userId) {
+        return userMapper.fromSpecificUser(
+                Stream.ofNullable(userService.getUser(userId))
+                .peek(u -> {
+                    if(!SecurityContextHolder.getContext().getUserId().equals(u.getId()))
+                        throw new UserException(HttpStatus.UNAUTHORIZED, new UserError(CODE_01, CODE_01.getMessage()));
+                }).findFirst().orElse(null));
     }
 
     @Override
@@ -47,11 +58,15 @@ public class UserController implements UserAPI {
             throw new RuntimeException();
         firstName = userDTO.getFirstName();
         lastName = userDTO.getLastName();
-        if(isValidEmail(email) && isValidPhoneNumber(phoneNumber) &&
-                isValidName(firstName) && isValidName(lastName) &&
-                checkNameLength(firstName) && checkNameLength(lastName))
+        System.out.println(firstName + " " + lastName );
+        if(isValidEmail(email) &&
+                isValidPhoneNumber(phoneNumber) &&
+                isValidName(firstName) &&
+                isValidName(lastName) &&
+                checkNameLength(firstName) &&
+                checkNameLength(lastName))
             return userMapper.fromUser(userService.createUser(userMapper.fromDTO(userDTO)));
-        throw new RuntimeException();
+    throw new RuntimeException();
     }
 
     private boolean checkUserNull(UserCreateDTO userDTO) {

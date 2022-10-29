@@ -15,7 +15,7 @@ import java.util.UUID;
 public interface UserAPI {
 
     @GetMapping("/{userId}")
-    public UserDTO getUser(@PathVariable UUID userId);
+    public UserCreateDTO getUser(@PathVariable UUID userId);
 
     @PostMapping()
     public UserDTO createUser(@RequestBody UserCreateDTO userDTO);
