@@ -34,6 +34,6 @@ public class LoginServiceImpl implements LoginService {
         }
         throw new InvalidParameterException();
 
-    }
+    }//End login
 
 }
