@@ -5,7 +5,7 @@ import javax.validation.ConstraintValidatorContext;
 
 public class PasswordValidator implements ConstraintValidator<CustomAnnotations.PasswordValidation, String> {
 
-    private final String PASSWORD_REGEX = "^(?=.*?[A-Z])(?=(.*[a-z]))(?=(.*[\\d]))(?=(.*[#$%@]))(?=.*[\\W]).{4,}$";
+    private final String PASSWORD_REGEX = "^(?=.*?[A-Z])(?=(.*[a-z]))(?=(.*[\\d]))(?=(.*[#$%@])).{4,}$";
 
     @Override
     public boolean isValid(String s, ConstraintValidatorContext constraintValidatorContext) {

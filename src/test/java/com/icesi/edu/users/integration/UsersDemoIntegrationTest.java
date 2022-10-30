@@ -27,7 +27,6 @@ import java.nio.charset.StandardCharsets;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(SpringExtension.class)
@@ -52,6 +51,7 @@ public class UsersDemoIntegrationTest {
     @Test
     public void createUserSuccessfully() {
         String body = parseResourceToString("createUser.json");
+
         MvcResult res = mockMvc.perform(MockMvcRequestBuilders.post("/users")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(body)).andExpect(status().isOk())
