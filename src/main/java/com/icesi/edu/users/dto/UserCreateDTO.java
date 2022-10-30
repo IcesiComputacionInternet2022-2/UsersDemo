@@ -1,5 +1,6 @@
 package com.icesi.edu.users.dto;
 
+import com.icesi.edu.users.validations.CustomAnnotation.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -29,7 +30,7 @@ public class UserCreateDTO {
     @Size(min = 1, max = 120)
     private String lastName;
 
-    @NotNull
+    @PasswordValidation
     private String password;
 
 }
