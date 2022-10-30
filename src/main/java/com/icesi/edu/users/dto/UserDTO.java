@@ -27,7 +27,6 @@ public class UserDTO {
     private String phoneNumber;
 
     @Size(min = 1, max = 120)
-    @NameValidation
     private String firstName;
 
     @NotNull
