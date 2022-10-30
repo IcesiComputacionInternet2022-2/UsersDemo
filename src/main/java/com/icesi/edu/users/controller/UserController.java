@@ -27,6 +27,7 @@ public class UserController implements UserAPI {
     @Override
     public UserDTO createUser(UserDTO userDTO) {
         if (validateUser(userDTO)) return userMapper.fromUser(userService.createUser(userMapper.fromDTO(userDTO)));
+        System.err.println("Something is going bad");
         return null;
     }
 
