@@ -1,4 +1,4 @@
-package com.icesi.edu.users.controller;
+package com.icesi.edu.users.controller.rest;
 
 import com.icesi.edu.users.api.LoginAPI;
 import com.icesi.edu.users.dto.LoginDTO;
@@ -11,11 +11,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class LoginController implements LoginAPI {
 
-
     private final LoginService loginService;
 
     @Override
     public TokenDTO login(LoginDTO loginDTO) {
         return loginService.login(loginDTO);
     }
+
 }

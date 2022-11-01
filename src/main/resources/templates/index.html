@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<!--suppress ALL -->
+<html xmlns:th="https://thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Thymeleaf</title>
+</head>
+<body>
+    <div>
+        <span th:text="#{welcome.message}"/>
+    </div>
+    <div>
+        <span th:text="${serverTime}"/>
+    </div>
+    <div th:each="user: ${users}">
+        <span th:text="${user.firstName}"/>
+        <span th:text="${user.lastName}"/>
+        <span th:if="${user.gender} == 'M'" th:text="Male"/>
+        <span th:unless="${user.gender} == 'M'" th:text="Female"/>
+    </div>
+    <div>
+        <form action="#" th:action="@{/saveUser}" th:object="${user}" method="post">
+            <table border="1">
+                <tr>
+                    <td><label th:text="#{msg.first.name}"/></td>
+                    <td><input type="text" th:field="*{firstName}"/></td>
+                </tr>
+                <tr>
+                    <td><label th:text="#{msg.last.name}"/></td>
+                    <td><input type="text" th:field="*{lastName}"/></td>
+                </tr>
+                <tr>
+                    <td><input type="submit" value="Submit"/></td>
+                </tr>
+            </table>
+        </form>
+    </div>
+</body>
+</html>

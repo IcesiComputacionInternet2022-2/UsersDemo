@@ -1,6 +1,5 @@
 /*
  * BrightInsight CONFIDENTIAL
-
  * Copyright (c) 2019-2021 BrightInsight, All Rights Reserved.
  * NOTICE: These materials, together with all information, code, and other content contained herein (all of the
  * foregoing, collectively, this “Content”) is, and remains the property of BrightInsight, Inc. (“BrightInsight”), and
@@ -10,7 +9,6 @@
  * this Content, in whole or in part, is strictly forbidden unless prior written permission is obtained from
  * BrightInsight. The copyright notice above does not evidence any actual or intended publication or disclosure of this
  * Content, and this Content may be a trade secret of BrightInsight.
-
  * ANY USE, REPRODUCTION, MODIFICATION, DISTRIBUTION, PUBLIC PERFORMANCE, OR PUBLIC DISPLAY OF THIS CONTENT OR THROUGH
  * USE OF ANY SOFTWARE THAT IS PART OF THIS CONTENT (REGARDLESS OF WHETHER IN SOURCE OR OBJECT CODE), IN WHOLE OR IN
  * PART, IS STRICTLY PROHIBITED OTHER THAN AS EXPRESSLY AUTHORIZED BY BRIGHTINSIGHT IN WRITING, AND MAY BE IN VIOLATION
@@ -21,12 +19,19 @@
 
 package com.icesi.edu.users.security;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.icesi.edu.users.constant.UserErrorCode;
+import com.icesi.edu.users.error.exception.UserError;
+import com.icesi.edu.users.error.exception.UserException;
 import com.icesi.edu.users.utils.JWTParser;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.MalformedJwtException;
+import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -36,29 +41,24 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.security.InvalidParameterException;
+import java.net.BindException;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.UUID;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+
 @Component
 @Order(1)
 public class JWTAuthorizationTokenFilter extends OncePerRequestFilter {
-    
-   private static final String AUTHORIZATION_HEADER = "Authorization";
-   private static final String TOKEN_PREFIX = "Bearer ";
 
-   private static final String USER_ID_CLAIM_NAME = "userId";
-
-   private static final String[] excludedPaths = {"POST /users", "POST /login"};
-
+    private static final String AUTHORIZATION_HEADER = "Authorization";
+    private static final String TOKEN_PREFIX = "Bearer";
+    private static final String USER_ID_CLAIM_NAME = "userId";
+    private static final String[] excludedPaths = {"POST /login", "GET /thymeleaf", "POST /saveUser"};
 
     @Override
-    protected void doFilterInternal(
-            @NonNull HttpServletRequest request,
-            @NonNull HttpServletResponse response,
-            @NonNull FilterChain filterChain)
-            throws ServletException, IOException {
+    protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain) throws ServletException, IOException {
         try {
             if (containsToken(request)) {
                 String jwtToken = request.getHeader(AUTHORIZATION_HEADER).replace(TOKEN_PREFIX, StringUtils.EMPTY);
@@ -67,10 +67,10 @@ public class JWTAuthorizationTokenFilter extends OncePerRequestFilter {
                 SecurityContextHolder.setUserContext(context);
                 filterChain.doFilter(request, response);
             } else {
-                throw new InvalidParameterException();
+                createUnauthorizedFilter(new UserException(HttpStatus.UNAUTHORIZED, new UserError(UserErrorCode.CODE_01.name(), UserErrorCode.CODE_01.getMessage())), response);
             }
         } catch (JwtException e) {
-            System.out.println("Error verifying JWT token: " + e.getMessage());
+            createUnauthorizedFilter(new UserException(HttpStatus.UNAUTHORIZED, new UserError(UserErrorCode.CODE_02.name(), UserErrorCode.CODE_02.getMessage() + e.getMessage())), response);
         } finally {
             SecurityContextHolder.clearContext();
         }
@@ -78,7 +78,6 @@ public class JWTAuthorizationTokenFilter extends OncePerRequestFilter {
 
     private SecurityContext parseClaims(String jwtToken, Claims claims) {
         String userId = claimKey(claims, USER_ID_CLAIM_NAME);
-
         SecurityContext context = new SecurityContext();
         try {
             context.setUserId(UUID.fromString(userId));
@@ -105,6 +104,15 @@ public class JWTAuthorizationTokenFilter extends OncePerRequestFilter {
         return authenticationHeader != null && authenticationHeader.startsWith(TOKEN_PREFIX);
     }
 
-
+    @SneakyThrows
+    private void createUnauthorizedFilter(UserException userException, HttpServletResponse response) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        UserError userError = userException.getError();
+        String message = objectMapper.writeValueAsString(userError);
+        response.setStatus(401);
+        response.setHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE);
+        response.getWriter().write(message);
+        response.getWriter().flush();
+    }
 
 }

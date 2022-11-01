@@ -2,19 +2,17 @@ package com.icesi.edu.users.utils;
 
 
 import io.jsonwebtoken.*;
-import org.springframework.stereotype.Component;
 
 import javax.crypto.spec.SecretKeySpec;
 import javax.xml.bind.DatatypeConverter;
 import java.security.Key;
 import java.util.Date;
 import java.util.Map;
-import java.util.Optional;
 
 
 public class JWTParser {
 
-    private static String SECRET_KEY = "longenoguhkeytotestthisimplementationsomebytesmore";
+    private final static String SECRET_KEY = "longenoughkeytotestthisimplementationsomebytesmore";
 
     public static String createJWT(String id, String issuer, String subject, Map<String, String> claims, long ttlMillis) {
 
@@ -45,7 +43,5 @@ public class JWTParser {
     public static Claims decodeJWT(String jwt) {
         return Jwts.parserBuilder().setSigningKey(DatatypeConverter.parseBase64Binary(SECRET_KEY)).build().parseClaimsJws(jwt).getBody();
     }
-
-
 
 }
