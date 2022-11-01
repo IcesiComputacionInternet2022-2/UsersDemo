@@ -1,0 +1,13 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <title>Spring Boot: Creando contenido Web</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" th:href="@{../static/css/main.css}">
+</head>
+<body>
+    <h1>Thymeleaf Spring Boot: Initial Approach</h1>
+    <span th:text="#{welcome.message}"/>
+    Current time is <span th:text="${serverTime}"/>
+</body>
+</html>
