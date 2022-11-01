@@ -7,36 +7,22 @@ import java.lang.annotation.*;
 public interface CustomAnnotations {
 
     @Documented
-    @Constraint(validatedBy = NameValidator.class)
+    @Constraint(validatedBy = PasswordValidator.class)
     @Target({ ElementType.METHOD, ElementType.FIELD })
     @Retention(RetentionPolicy.RUNTIME)
-    @interface NameValidation {
+    @interface PasswordValidation {
 
 
-        String message() default "Name is invalid";
+
+        String message() default "Invalid Password";
+
 
         Class<?>[] groups() default {};
+
 
         Class<? extends Payload>[] payload() default {};
 
     }
 
-    @Documented
-    @Constraint(validatedBy = NameValidator.class)
-    @Target({ ElementType.METHOD, ElementType.FIELD })
-    @Retention(RetentionPolicy.RUNTIME)
-    @interface EmailValidation {
 
-
-        String message() default "Name is invalid";
-
-        Class<?>[] groups() default {};
-
-        Class<? extends Payload>[] payload() default {};
-
-    }
 }
-
-
-
-

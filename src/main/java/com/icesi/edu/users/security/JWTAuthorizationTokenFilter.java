@@ -1,32 +1,18 @@
-/*
- * BrightInsight CONFIDENTIAL
-
- * Copyright (c) 2019-2021 BrightInsight, All Rights Reserved.
- * NOTICE: These materials, together with all information, code, and other content contained herein (all of the
- * foregoing, collectively, this “Content”) is, and remains the property of BrightInsight, Inc. (“BrightInsight”), and
- * BrightInsight reserves all rights in and related to this Content. This Content is confidential and proprietary to
- * BrightInsight and may be covered by U.S. and/or foreign registered intellectual property or proprietary rights and/or
- * laws, including without limitation trade secret and copyright laws. Dissemination or reproduction of or access to
- * this Content, in whole or in part, is strictly forbidden unless prior written permission is obtained from
- * BrightInsight. The copyright notice above does not evidence any actual or intended publication or disclosure of this
- * Content, and this Content may be a trade secret of BrightInsight.
-
- * ANY USE, REPRODUCTION, MODIFICATION, DISTRIBUTION, PUBLIC PERFORMANCE, OR PUBLIC DISPLAY OF THIS CONTENT OR THROUGH
- * USE OF ANY SOFTWARE THAT IS PART OF THIS CONTENT (REGARDLESS OF WHETHER IN SOURCE OR OBJECT CODE), IN WHOLE OR IN
- * PART, IS STRICTLY PROHIBITED OTHER THAN AS EXPRESSLY AUTHORIZED BY BRIGHTINSIGHT IN WRITING, AND MAY BE IN VIOLATION
- * OF APPLICABLE LAWS AND INTERNATIONAL TREATIES. THE RECEIPT OR POSSESSION OF THIS CONTENT AND/OR RELATED INFORMATION
- * DOES NOT CONVEY OR IMPLY ANY RIGHT TO REPRODUCE, DISCLOSE, DISTRIBUTE OR OTHERWISE USE IT, OR TO MANUFACTURE, USE, OR
- * SELL ANYTHING THAT IT MAY DESCRIBE, IN WHOLE OR IN PART.
- */
-
 package com.icesi.edu.users.security;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.icesi.edu.users.constant.ErrorConstants;
+import com.icesi.edu.users.error.exception.UserDemoError;
+import com.icesi.edu.users.error.exception.UserDemoException;
 import com.icesi.edu.users.utils.JWTParser;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.MalformedJwtException;
+import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -41,16 +27,18 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.UUID;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+
 @Component
 @Order(1)
 public class JWTAuthorizationTokenFilter extends OncePerRequestFilter {
-    
-   private static final String AUTHORIZATION_HEADER = "Authorization";
-   private static final String TOKEN_PREFIX = "Bearer ";
 
-   private static final String USER_ID_CLAIM_NAME = "userId";
+    private static final String AUTHORIZATION_HEADER = "Authorization";
+    private static final String TOKEN_PREFIX = "Bearer ";
 
-   private static final String[] excludedPaths = {"POST /users", "POST /login"};
+    private static final String USER_ID_CLAIM_NAME = "userId";
+
+    private static final String[] excludedPaths = {"POST /login", "GET /view"};
 
 
     @Override
@@ -67,10 +55,12 @@ public class JWTAuthorizationTokenFilter extends OncePerRequestFilter {
                 SecurityContextHolder.setUserContext(context);
                 filterChain.doFilter(request, response);
             } else {
-                throw new InvalidParameterException();
+                UserDemoException userDemoException = new UserDemoException(HttpStatus.UNAUTHORIZED, new UserDemoError("CODE_UD_13", ErrorConstants.CODE_UD_13));
+                createUnauthorizedFilter( userDemoException, response);
             }
         } catch (JwtException e) {
-            System.out.println("Error verifying JWT token: " + e.getMessage());
+            UserDemoException userDemoException = new UserDemoException(HttpStatus.UNAUTHORIZED, new UserDemoError("CODE_UD_13", ErrorConstants.CODE_UD_13));
+            createUnauthorizedFilter( userDemoException, response);
         } finally {
             SecurityContextHolder.clearContext();
         }
@@ -103,6 +93,21 @@ public class JWTAuthorizationTokenFilter extends OncePerRequestFilter {
     private boolean containsToken(HttpServletRequest request) {
         String authenticationHeader = request.getHeader(AUTHORIZATION_HEADER);
         return authenticationHeader != null && authenticationHeader.startsWith(TOKEN_PREFIX);
+    }
+
+    @SneakyThrows
+    private void createUnauthorizedFilter(UserDemoException userDemoException, HttpServletResponse response) {
+
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        UserDemoError userDemoError = userDemoException.getError();
+
+        String message = objectMapper.writeValueAsString(userDemoError);
+
+        response.setStatus(401);
+        response.setHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE);
+        response.getWriter().write(message);
+        response.getWriter().flush();
     }
 
 

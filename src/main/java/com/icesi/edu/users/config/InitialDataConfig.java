@@ -1,5 +1,4 @@
-
-package com.icesi.edu.users.integration.config;
+package com.icesi.edu.users.config;
 
 import liquibase.integration.spring.SpringLiquibase;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +12,7 @@ import javax.sql.DataSource;
 @Configuration
 public class InitialDataConfig {
 
-   // @Autowired
+    @Autowired
     public void configureInitialData(DataSource dataSource, SpringLiquibase liquibase) {
         ResourceDatabasePopulator resourceDatabasePopulator = new ResourceDatabasePopulator();
         resourceDatabasePopulator.addScript(new ClassPathResource("/data.sql"));

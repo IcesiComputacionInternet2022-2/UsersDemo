@@ -1,5 +1,6 @@
 package com.icesi.edu.users.dto;
 
+
 import lombok.Data;
 
 @Data
