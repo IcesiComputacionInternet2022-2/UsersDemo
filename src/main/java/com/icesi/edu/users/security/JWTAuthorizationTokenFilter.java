@@ -28,7 +28,8 @@ import java.util.Optional;
 import java.util.UUID;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
-@Component
+//
+// @Component
 @Order(1)
 public class JWTAuthorizationTokenFilter extends OncePerRequestFilter {
 
