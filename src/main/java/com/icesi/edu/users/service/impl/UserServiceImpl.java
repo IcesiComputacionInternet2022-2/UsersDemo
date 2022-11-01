@@ -7,7 +7,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -33,8 +32,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User createUser(User userDTO) {
-        return (uniqueEmail(userDTO.getEmail()) && uniquePhone(userDTO.getPhoneNumber())) ? userRepository.save(userDTO) : null;
+    public User createUser(User user) {
+        return (uniqueEmail(user.getEmail()) && uniquePhone(user.getPhoneNumber())) ? userRepository.save(user) : null;
     }
 
     private List<User> getUsersRaw() {

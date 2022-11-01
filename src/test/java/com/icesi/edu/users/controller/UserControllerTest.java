@@ -5,6 +5,7 @@ import com.icesi.edu.users.mapper.UserMapper;
 import com.icesi.edu.users.mapper.UserMapperImpl;
 import com.icesi.edu.users.model.User;
 import com.icesi.edu.users.service.UserService;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
@@ -30,6 +31,7 @@ public class UserControllerTest {
     }
 
     @Test
+    @SneakyThrows
     public void testController() {
         UserDTO userDTO = new UserDTO(null,"mock@icesi.edu.co", "+573153823657", "Mock", "Mockery", null);
         assertEquals(userDTO.getEmail(), userController.createUser(userDTO).getEmail());
