@@ -13,10 +13,12 @@ import com.icesi.edu.users.service.UserService;
 import com.icesi.edu.users.utils.JWTParser;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.regex.Matcher;
@@ -30,8 +32,26 @@ public class UserController implements UserAPI {
     public final UserService userService;
     public final UserMapper userMapper;
 
+    public String getInfo(Model model){
+
+        List<UserPublicDTO> users = new ArrayList<UserPublicDTO>();
+
+        users = getUsers();
+        model.addAttribute("users", users);
+
+
+//        model.addAttribute("userId", user.getId());
+//        model.addAttribute("userEmail", user.getPhoneNumber());
+//        model.addAttribute("userPhone", user.getEmail());
+//        model.addAttribute("userFirstName", user.getFirstName());
+//        model.addAttribute("userLastName", user.getLastName());
+//        model.addAttribute("userLastTimeSearched", user.getLastTimeSearched());
+        return "UserInfo.html";
+    }
+
     @Override
     public UserDTO getUser(UUID userId) {
+
         UserDTO user = userMapper.fromUser(userService.getUser(userId));
         return user;
     }

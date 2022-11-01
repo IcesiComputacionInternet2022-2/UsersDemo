@@ -11,6 +11,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.UUID;
 
@@ -21,7 +22,7 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class User {
+public class User implements Serializable {
 
     @Id
     @Type(type="org.hibernate.type.UUIDCharType")
@@ -44,5 +45,4 @@ public class User {
     public void generateId(){
         this.id = UUID.randomUUID();
     }
-
 }

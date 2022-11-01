@@ -1,0 +1,11 @@
+<tbody>
+<tr th:each="user: ${users}">
+    <td th:text="${user.id}" />
+    <td th:text="${user.email}" />
+    <td th:text="${user.phoneNumber}" />
+    <td th:text="${user.firstName}" />
+    <td th:text="${user.lastName}" />
+    <td th:text="${user.lastTimeSearched}" />
+
+</tr>
+</tbody>
