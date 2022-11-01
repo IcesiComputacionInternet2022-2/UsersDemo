@@ -31,7 +31,7 @@ public class JWTAuthorizationTokenFilter extends OncePerRequestFilter {
     public static final String AUTHORIZATION_HEADER = "Authorization";
     public static final String TOKEN_PREFIX = "Bearer ";
     public static final String USER_ID_CLAIM_NAME = "userId";
-    public static final String[] EXCLUDE_PATHS = {"POST /login"};
+    public static final String[] EXCLUDE_PATHS = {"POST /login", "GET /"};
 
     @Override
     @SneakyThrows
