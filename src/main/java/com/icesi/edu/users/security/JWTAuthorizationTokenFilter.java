@@ -55,7 +55,7 @@ public class JWTAuthorizationTokenFilter extends OncePerRequestFilter {
 
     private static final String USER_ID_CLAIM_NAME = "userId";
 
-    private static final String[] excludedPaths = {"POST /login"}; //El unico path excluido debe ser el login
+    private static final String[] excludedPaths = {"POST /login", "GET /helloWorld"}; //El unico path excluido debe ser el login
 
 
     @Override
