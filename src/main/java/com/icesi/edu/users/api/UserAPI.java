@@ -15,12 +15,12 @@ import java.util.UUID;
 public interface UserAPI {
 
     @GetMapping("/{userId}")
-    public UserDTO getUser(@PathVariable UUID userId);
+    UserDTO getUser(@PathVariable UUID userId);
 
     @PostMapping()
-    public UserDTO createUser(@RequestBody UserCreateDTO userDTO);
+    UserDTO createUser(@RequestBody UserCreateDTO userDTO);
 
     @GetMapping
-    public List<UserDTO> getUsers();
+    List<UserDTO> getUsers();
 
 }
