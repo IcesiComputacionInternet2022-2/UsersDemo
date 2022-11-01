@@ -1,23 +1,18 @@
 package com.icesi.edu.users.controller;
 
 import com.icesi.edu.users.api.UserAPI;
-import com.icesi.edu.users.constant.UserErrorCode;
 import com.icesi.edu.users.dto.UserCreateDTO;
 import com.icesi.edu.users.dto.UserDTO;
 import com.icesi.edu.users.error.exception.UserError;
 import com.icesi.edu.users.error.exception.UserException;
 import com.icesi.edu.users.mapper.UserMapper;
-import com.icesi.edu.users.model.User;
-import com.icesi.edu.users.security.JWTAuthorizationTokenFilter;
 import com.icesi.edu.users.security.SecurityContextHolder;
 import com.icesi.edu.users.service.UserService;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;

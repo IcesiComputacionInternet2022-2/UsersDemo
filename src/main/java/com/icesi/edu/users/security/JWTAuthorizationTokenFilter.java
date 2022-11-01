@@ -47,7 +47,7 @@ import java.util.UUID;
 import static com.icesi.edu.users.constant.UserErrorCode.CODE_01;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
-@Component
+//@Component
 @Order(1)
 public class JWTAuthorizationTokenFilter extends OncePerRequestFilter {
 
@@ -56,7 +56,7 @@ public class JWTAuthorizationTokenFilter extends OncePerRequestFilter {
 
     private static final String USER_ID_CLAIM_NAME = "userId";
 
-    private static final String[] excludedPaths = {"POST /login"};
+    private static final String[] excludedPaths = {"GET /view", "POST /login"};
 
 
     @Override
