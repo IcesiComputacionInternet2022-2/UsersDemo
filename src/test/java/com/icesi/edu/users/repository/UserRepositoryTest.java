@@ -25,6 +25,8 @@ public class UserRepositoryTest {
 
     @Test
     public void whenCalledSave_thenCorrectNumberOfUsers() {
+        userRepository.deleteAll();
+
         userRepository.save(User.builder().email("asds").phoneNumber("asdsd").firstName("John").lastName("Doe").build());
         List<User> users = (List<User>) userRepository.findAll();
 
