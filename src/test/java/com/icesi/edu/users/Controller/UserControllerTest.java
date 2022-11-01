@@ -32,7 +32,11 @@ public class UserControllerTest {
         String phoneNumber = "+573005533490";
         String firstName = "Kennet";
         String lastName = "Sanchez";
+<<<<<<< Updated upstream
         userDTO = new UserDTO(id,email,phoneNumber,firstName,lastName,null);
+=======
+        userDTO = new UserDTO(id,email,phoneNumber,firstName,lastName,null, null);
+>>>>>>> Stashed changes
     }
 
     @Test

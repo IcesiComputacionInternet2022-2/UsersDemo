@@ -54,7 +54,11 @@ public class UserServiceTest {
         String phoneNumber = "+573005533490";
         String firstName = "Kennet";
         String lastName = "Sanchez";
+<<<<<<< Updated upstream
         user = new User(id,email,phoneNumber,firstName,lastName,null);
+=======
+        user = new User(id,email,phoneNumber,firstName,lastName,null, null);
+>>>>>>> Stashed changes
     }
 
     @Test
