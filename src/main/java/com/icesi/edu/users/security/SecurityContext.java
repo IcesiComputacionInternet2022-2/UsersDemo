@@ -1,6 +1,5 @@
 /*
  * BrightInsight CONFIDENTIAL
-
  * Copyright (c) 2019-2021 BrightInsight, All Rights Reserved.
  * NOTICE: These materials, together with all information, code, and other content contained herein (all of the
  * foregoing, collectively, this “Content”) is, and remains the property of BrightInsight, Inc. (“BrightInsight”), and
@@ -10,7 +9,6 @@
  * this Content, in whole or in part, is strictly forbidden unless prior written permission is obtained from
  * BrightInsight. The copyright notice above does not evidence any actual or intended publication or disclosure of this
  * Content, and this Content may be a trade secret of BrightInsight.
-
  * ANY USE, REPRODUCTION, MODIFICATION, DISTRIBUTION, PUBLIC PERFORMANCE, OR PUBLIC DISPLAY OF THIS CONTENT OR THROUGH
  * USE OF ANY SOFTWARE THAT IS PART OF THIS CONTENT (REGARDLESS OF WHETHER IN SOURCE OR OBJECT CODE), IN WHOLE OR IN
  * PART, IS STRICTLY PROHIBITED OTHER THAN AS EXPRESSLY AUTHORIZED BY BRIGHTINSIGHT IN WRITING, AND MAY BE IN VIOLATION
@@ -44,7 +42,7 @@ public class SecurityContext implements Serializable {
     public UUID getUserId() {
         return Optional.ofNullable(userId).orElseThrow();
     }
-    
+
     public UUID getRoleId() {
         return Optional.ofNullable(roleId).orElseThrow();
     }

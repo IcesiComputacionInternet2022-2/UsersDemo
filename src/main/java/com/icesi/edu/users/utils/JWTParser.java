@@ -1,16 +1,11 @@
 package com.icesi.edu.users.utils;
 
-
 import io.jsonwebtoken.*;
-import org.springframework.stereotype.Component;
-
 import javax.crypto.spec.SecretKeySpec;
 import javax.xml.bind.DatatypeConverter;
 import java.security.Key;
 import java.util.Date;
 import java.util.Map;
-import java.util.Optional;
-
 
 public class JWTParser {
 

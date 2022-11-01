@@ -1,6 +1,7 @@
 package com.icesi.edu.users.repository;
 
 
+
 import com.icesi.edu.users.model.User;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,3 +33,4 @@ public class UserRepositoryTest {
     }
 
 }
+
