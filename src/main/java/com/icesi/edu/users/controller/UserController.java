@@ -1,17 +1,27 @@
 package com.icesi.edu.users.controller;
 
 import com.icesi.edu.users.api.UserAPI;
+import com.icesi.edu.users.dto.UserCreateDTO;
 import com.icesi.edu.users.dto.UserDTO;
+import com.icesi.edu.users.error.exception.UserDemoError;
+import com.icesi.edu.users.error.exception.UserDemoException;
 import com.icesi.edu.users.mapper.UserMapper;
 import com.icesi.edu.users.model.User;
 import com.icesi.edu.users.service.UserService;
+import com.icesi.edu.users.validation.CustomAnnotations.*;
 import lombok.AllArgsConstructor;
+import org.springframework.data.repository.query.Param;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
+import static com.icesi.edu.users.constants.UserErrorCode.*;
 
 @RestController
 @AllArgsConstructor
@@ -22,20 +32,17 @@ public class UserController implements UserAPI {
     public final UserMapper userMapper;
 
     @Override
-    public UserDTO getUser(UUID userId) {
-        UserDTO user = userMapper.fromUser(userService.getUser(userId));
-        user.setDate(LocalDate.now().toString());
-        return user;
+    public UserCreateDTO getUser(UUID userId) {
+        return userMapper.fromUserWithPassword(userService.getUser(userId));
     }
 
     @Override
-    public UserDTO createUser(UserDTO userDTO) {
+    public UserCreateDTO createUser(@Valid UserCreateDTO userDTO) {
         if (validUser(userDTO.getEmail(),userDTO.getPhoneNumber(),userDTO.getFirstName(),userDTO.getLastName())){
-            UserDTO usr =  userMapper.fromUser(userService.createUser(userMapper.fromDTO(userDTO)));
-            return usr;
+            return  userMapper.fromUserWithPassword(userService.createUser(userMapper.fromDTO(userDTO)));
         }
 
-        throw new RuntimeException("Not a valid user");
+        throw new UserDemoException(HttpStatus.BAD_REQUEST, new UserDemoError(CODE_004.toString(), CODE_004.getMessage()));
     }
 
     public boolean validUser(String email,String phoneNumber,String name,String lastName){
