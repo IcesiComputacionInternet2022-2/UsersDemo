@@ -12,10 +12,6 @@ import javax.persistence.Id;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import java.time.LocalDate;
-<<<<<<< Updated upstream
-import java.time.LocalTime;
-=======
->>>>>>> Stashed changes
 import java.util.UUID;
 
 
@@ -39,14 +35,10 @@ public class User {
 
     private String lastName;
 
-<<<<<<< Updated upstream
    private LocalDate lastTimeSearched;
-=======
+
     private String hashedPassword;
 
-    private LocalDate lastTimeSearched;
-
->>>>>>> Stashed changes
 
     @PrePersist
     public void generateId(){
