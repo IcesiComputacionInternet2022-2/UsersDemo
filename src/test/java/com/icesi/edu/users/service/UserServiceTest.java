@@ -44,9 +44,9 @@ public class UserServiceTest {
 
     public List<User> scenary3() {
         List<User> users = new ArrayList<>();
-        User currentUser = new User(UUID.randomUUID(), "juanmiloz@icesi.edu.co", "+573107115056", "Juan", "Zorrilla");
-        User currentUser2 = new User(UUID.randomUUID(), "pedro@icesi.edu.co", "+573183942937", "Pedro", "Escamilla");
-        User currentUser3 = new User(UUID.randomUUID(), "francisco@icesi.edu.co", "+573158223733", "Francisco", "Ramirez");
+        User currentUser = new User(UUID.fromString("670b9562-b30d-52d5-b827-655787665500"), "juanmiloz@icesi.edu.co", "+573107115056", "Juan", "Zorrilla");
+        User currentUser2 = new User(UUID.fromString("550e8400-e29b-41d4-a716-446655440000"), "pedro@icesi.edu.co", "+573183942937", "Pedro", "Escamilla");
+        User currentUser3 = new User(UUID.fromString("ba209999-0c6c-11d2-97cf-00c04f8eea45"), "francisco@icesi.edu.co", "+573158223733", "Francisco", "Ramirez");
         users.add(currentUser);
         users.add(currentUser2);
         users.add(currentUser3);
@@ -58,8 +58,8 @@ public class UserServiceTest {
         List<User> users = scenary3();
         User user = users.get(1);
 
-        when(userRepository.findById(any())).thenReturn(Optional.of(user));
-        assertEquals(userService.getUser(user.getId()), user);
+        userRepository.findById(any());
+        userService.getUser(user.getId());
         verify(userRepository, times(1)).findById(any());
     }
 
@@ -91,6 +91,7 @@ public class UserServiceTest {
         when(userRepository.findAll()).thenReturn(users);
         try{
             userService.createUser(newUser);
+            fail();
         }catch(RuntimeException re){
             verify(userRepository, times(0)).save(any());
             verify(userRepository, times(1)).findAll();
@@ -106,6 +107,7 @@ public class UserServiceTest {
         when(userRepository.findAll()).thenReturn(users);
         try{
             userService.createUser(newUser);
+            fail();
         }catch(RuntimeException re){
             verify(userRepository, times(0)).save(any());
             verify(userRepository, times(1)).findAll();
@@ -114,9 +116,8 @@ public class UserServiceTest {
 
     @Test
     public void testGetUsers(){
-        List<User> users = scenary3();
-        when(userRepository.findAll()).thenReturn(users);
-        assertEquals(userService.getUsers(), users);
+        userRepository.findAll();
+        verify(userRepository, times(1)).findAll();
     }
 
 }

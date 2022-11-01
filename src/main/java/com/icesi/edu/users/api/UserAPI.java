@@ -17,7 +17,7 @@ public interface UserAPI {
     @GetMapping("/{userId}")
     public UserDTOConsult getUser(@PathVariable UUID userId);
 
-    @PostMapping()
+    @PostMapping
     public UserDTO createUser(@RequestBody UserDTO userDTO);
 
     @GetMapping

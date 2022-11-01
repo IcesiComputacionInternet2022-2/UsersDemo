@@ -1,14 +1,21 @@
 package com.icesi.edu.users.controller;
 
 import com.icesi.edu.users.api.UserAPI;
+import com.icesi.edu.users.config.InitialDataConfig;
+import com.icesi.edu.users.constant.ErrorConstants;
 import com.icesi.edu.users.dto.UserDTO;
 import com.icesi.edu.users.dto.UserDTOConsult;
+import com.icesi.edu.users.error.exception.UserDemoError;
+import com.icesi.edu.users.error.exception.UserDemoException;
 import com.icesi.edu.users.mapper.UserMapper;
+import com.icesi.edu.users.security.SecurityContextHolder;
 import com.icesi.edu.users.service.UserService;
 import lombok.AllArgsConstructor;
+import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.sql.SQLOutput;
+import javax.validation.Valid;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
@@ -16,6 +23,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @AllArgsConstructor
+@Import({InitialDataConfig.class})
 public class UserController implements UserAPI {
 
     private final static String DOMAIN = "@icesi.edu.co";
@@ -27,30 +35,44 @@ public class UserController implements UserAPI {
     public UserDTOConsult getUser(UUID userId) {
         UserDTOConsult userDTOConsult = userMapper.fromUserToUserDTOConsult(userService.getUser(userId));
         userDTOConsult.setLastCall(LocalDate.now());
+
         return userDTOConsult;
     }
 
+
     @Override
-    public UserDTO createUser(UserDTO userDTO) {
-        return verifyNulls(userDTO);
+    public UserDTO createUser(@Valid UserDTO userDTO) {
+        verifyNulls(userDTO);
+        verifyEmail(userDTO);
+        verifyPhone(userDTO);
+        verifyName(userDTO);
+
+        return userMapper.fromUser(userService.createUser(userMapper.fromDTO(userDTO)));
     }
 
-    private UserDTO verifyNulls(UserDTO userDTO){
+    private void verifyNulls(UserDTO userDTO) {
         String email = userDTO.getEmail();
         String phone = userDTO.getPhoneNumber();
 
-        if(email != null && phone != null) {
-            return verifyAllInputs(userDTO, email, phone);
-        }else if(email == null && phone != null){
-            return verifyInputsWithoutEmail(userDTO, phone);
-        }else if(phone == null && email != null){
-            return verifyInputsWithoutPhone(userDTO, email);
-        }else{
-            throw new RuntimeException();
+        if (email == null || phone == null) {
+            throw new UserDemoException(HttpStatus.BAD_REQUEST, new UserDemoError(ErrorConstants.CODE_03.getCode(), ErrorConstants.CODE_03.getMessage()));
         }
     }
 
-    private UserDTO verifyInputsWithoutEmail(UserDTO userDTO, String phone) {
+
+    //original
+    /*private UserDTO verifyNulls(UserDTO userDTO){
+        String email = userDTO.getEmail();
+        String phone = userDTO.getPhoneNumber();
+
+        if(email != null && phone != null){
+            return verifyAllInputs(userDTO, email, phone);
+        }else{
+            throw new UserDemoException(HttpStatus.BAD_REQUEST, new UserDemoError("Demo","Email and Number are null"));
+        }
+    }*/
+
+    /*private UserDTO verifyInputsWithoutEmail(UserDTO userDTO, String phone) {
         String fName = userDTO.getFirstName();
         String lName = userDTO.getLastName();
 
@@ -59,9 +81,9 @@ public class UserController implements UserAPI {
         }else{
             throw new RuntimeException();
         }
-    }
+    }*/
 
-    private UserDTO verifyInputsWithoutPhone(UserDTO userDTO, String email) {
+    /*private UserDTO verifyInputsWithoutPhone(UserDTO userDTO, String email) {
         String fName = userDTO.getFirstName();
         String lName = userDTO.getLastName();
 
@@ -70,9 +92,9 @@ public class UserController implements UserAPI {
         }else{
             throw new RuntimeException();
         }
-    }
+    }*/
 
-    private UserDTO verifyAllInputs(UserDTO userDTO, String email, String phone) {
+    /*private UserDTO verifyAllInputs(UserDTO userDTO, String email, String phone) {
         String fName = userDTO.getFirstName();
         String lName = userDTO.getLastName();
 
@@ -81,58 +103,74 @@ public class UserController implements UserAPI {
         }else{
             throw new RuntimeException();
         }
+    }*/
+
+    private void verifyName(UserDTO userDTO) {
+        String firstName = userDTO.getFirstName();
+        String lastName = userDTO.getLastName();
+
+        verifyNumCharacters(firstName,lastName);
+        verifySpecialCharacters(firstName,lastName);
     }
 
-    private boolean verifyName(String firstName, String lastName) {
-        System.out.println("verifyNumCharacters: " + verifyNumCharacters(firstName,lastName));
-        System.out.println("verifySpecialCharacters: " + verifySpecialCharacters(firstName,lastName));
-        return verifyNumCharacters(firstName,lastName) && verifySpecialCharacters(firstName,lastName);
+    private void verifySpecialCharacters(String firstName, String lastName) {
+        if(!(firstName.matches("[a-zA-Z]+") && lastName.matches("[a-zA-Z]+"))){
+            throw new UserDemoException(HttpStatus.BAD_REQUEST, new UserDemoError(ErrorConstants.CODE_10.getCode(), ErrorConstants.CODE_10.getMessage()));
+        }
     }
 
-    private boolean verifySpecialCharacters(String firstName, String lastName) {
-        return firstName.matches("[a-zA-Z]+") && lastName.matches("[a-zA-Z]+");
+    private void verifyNumCharacters(String firstName, String lastName) {
+        if(!(firstName.length() <= 60 && lastName.length() <= 60)){
+            throw new UserDemoException(HttpStatus.BAD_REQUEST, new UserDemoError(ErrorConstants.CODE_09.getCode(), ErrorConstants.CODE_09.getMessage()));
+        }
     }
 
-    private boolean verifyNumCharacters(String firstName, String lastName) {
-        return firstName.length() <= 120 && lastName.length() <= 120;
+    private void verifyPhone(UserDTO userDTO) {
+        String phone = userDTO.getPhoneNumber();
+        validatePrefix(phone);
+        validateSpaces(phone);
+        validNumber(phone);
     }
 
-    private boolean verifyPhone(String phone) {
-        System.out.println("validatePrefix: " + validatePrefix(phone));
-        System.out.println("validateSpaces: " + validateSpaces(phone));
-        System.out.println("validNumber: " + validNumber(phone));
-        return validatePrefix(phone) && validateSpaces(phone) && validNumber(phone);
-    }
-
-    private boolean validNumber(String phone) {
+    private void validNumber(String phone) {
         String substring = phone.substring(PREFIX.length());
-        return substring.length() == 10;
+        if(substring.length() != 10){
+            throw new UserDemoException(HttpStatus.BAD_REQUEST, new UserDemoError(ErrorConstants.CODE_08.getCode(), ErrorConstants.CODE_08.getMessage()));
+        }
     }
 
-    private boolean validateSpaces(String phone) {
+    private void validateSpaces(String phone) {
         String substring = phone.substring(PREFIX.length());
-        return substring.matches("[0-9]+");
+        if(!substring.matches("[0-9]+")){
+            throw new UserDemoException(HttpStatus.BAD_REQUEST, new UserDemoError(ErrorConstants.CODE_07.getCode(), ErrorConstants.CODE_07.getMessage()));
+        }
     }
 
-    private boolean validatePrefix(String phone) {
-        return phone.startsWith(PREFIX);
+    private void validatePrefix(String phone) {
+        if(!phone.startsWith(PREFIX)){
+            throw new UserDemoException(HttpStatus.BAD_REQUEST, new UserDemoError(ErrorConstants.CODE_06.getCode(), ErrorConstants.CODE_06.getMessage()));
+        }
     }
 
-    private boolean verifyEmail(String email) {
+    private void verifyEmail(UserDTO userDTO) {
+        String email = userDTO.getEmail();
         int idx = email.length() - DOMAIN.length();
-        System.out.println("verifyDomain: " + verifyDomain(idx, email));
-        System.out.println("validateMail: " + validateMail(idx, email));
-        return verifyDomain(idx, email) && validateMail(idx, email);
+        verifyDomain(idx, email);
+        validateMail(idx, email);
     }
 
-    public boolean validateMail(int  endIdx, String email){
+    public void validateMail(int  endIdx, String email){
         String newEmail = email.substring(0, endIdx);
-        return newEmail.matches("[a-zA-Z]+");
+        if(!newEmail.matches("[a-zA-Z]+")){
+            throw new UserDemoException(HttpStatus.BAD_REQUEST, new UserDemoError(ErrorConstants.CODE_05.getCode(), ErrorConstants.CODE_05.getMessage()));
+        }
     }
 
-    private boolean verifyDomain(int startIdx,String email){
+    private void verifyDomain(int startIdx,String email){
         String substring = email.substring(startIdx);
-        return substring.equals(DOMAIN);
+        if(!substring.equals(DOMAIN)){
+            throw new UserDemoException(HttpStatus.BAD_REQUEST, new UserDemoError(ErrorConstants.CODE_04.getCode(), ErrorConstants.CODE_04.getMessage()));
+        }
     }
 
     @Override
@@ -140,4 +178,3 @@ public class UserController implements UserAPI {
         return userService.getUsers().stream().map(userMapper::fromUser).collect(Collectors.toList());
     }
 }
-

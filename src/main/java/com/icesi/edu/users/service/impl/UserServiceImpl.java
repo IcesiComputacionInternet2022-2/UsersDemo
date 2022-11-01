@@ -1,17 +1,17 @@
 package com.icesi.edu.users.service.impl;
 
-import com.icesi.edu.users.dto.UserDTO;
+import com.icesi.edu.users.constant.ErrorConstants;
 import com.icesi.edu.users.dto.UserDTOConsult;
-import com.icesi.edu.users.mapper.UserMapper;
-import com.icesi.edu.users.mapper.UserMapperImpl;
+import com.icesi.edu.users.error.exception.UserDemoError;
+import com.icesi.edu.users.error.exception.UserDemoException;
 import com.icesi.edu.users.model.User;
 import com.icesi.edu.users.repository.UserRepository;
+import com.icesi.edu.users.security.SecurityContextHolder;
 import com.icesi.edu.users.service.UserService;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -25,7 +25,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getUser(UUID userId) {
-        return userRepository.findById(userId).orElse(null);
+        return verifyOwnerAccount(userRepository.findById(userId).orElse(null));
+    }
+
+    private User verifyOwnerAccount(User user){
+        if(user.getId().equals(SecurityContextHolder.getContext().getUserId())){
+            return user;
+        }else{
+            throw new UserDemoException(HttpStatus.BAD_REQUEST, new UserDemoError(ErrorConstants.CODE_02.getCode(), ErrorConstants.CODE_02.getMessage()));
+        }
     }
 
     @Override
@@ -51,12 +59,14 @@ public class UserServiceImpl implements UserService {
         if(!repeat){
             return userRepository.save(userDTO);
         }else{
-            throw new RuntimeException();
+            throw   new RuntimeException();
         }
     }
 
     @Override
     public List<User> getUsers() {
-        return StreamSupport.stream(userRepository.findAll().spliterator(),false).collect(Collectors.toList());
+        List<User> users = StreamSupport.stream(userRepository.findAll().spliterator(),false).collect(Collectors.toList());
+        StreamSupport.stream(users.spliterator(), false).forEach(user -> user.setPassword(null));
+        return users;
     }
 }

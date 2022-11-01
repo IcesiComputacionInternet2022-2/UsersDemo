@@ -1,18 +1,19 @@
 package com.icesi.edu.users.dto;
 
+import com.icesi.edu.users.validation.CustomAnnotations.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 
-import java.time.LocalDate;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.UUID;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@NonNull
-public class UserDTOConsult {
+public class UserWithoutPassword {
 
     private UUID id;
 
@@ -24,7 +25,4 @@ public class UserDTOConsult {
 
     private String lastName;
 
-    private String password;
-
-    private LocalDate lastCall;
 }
