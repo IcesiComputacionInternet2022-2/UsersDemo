@@ -1,16 +1,21 @@
 package com.icesi.edu.users.service.impl;
 
+import com.icesi.edu.users.error.exception.UserError;
+import com.icesi.edu.users.error.exception.UserException;
 import com.icesi.edu.users.model.User;
 import com.icesi.edu.users.repository.UserRepository;
+import com.icesi.edu.users.security.SecurityContextHolder;
 import com.icesi.edu.users.service.UserService;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
+
+import static com.icesi.edu.users.constant.UserErrorCode.S101;
 
 @AllArgsConstructor
 @Service
@@ -20,7 +25,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getUser(UUID userId) {
-        return userRepository.findById(userId).orElse(null);
+
+        UUID userAuth = SecurityContextHolder.getContext().getUserId();
+
+        if(userAuth == null || userAuth.equals(userId) == false){
+            throw new UserException(HttpStatus.UNAUTHORIZED, new UserError(S101, S101.getErrorMessage()));
+        }else{
+            return userRepository.findById(userId).orElse(null);
+        }
+
     }
 
     @Override

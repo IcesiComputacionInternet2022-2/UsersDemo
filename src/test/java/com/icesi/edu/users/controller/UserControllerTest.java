@@ -2,6 +2,7 @@ package com.icesi.edu.users.controller;
 
 import com.icesi.edu.users.controller.UserController;
 import com.icesi.edu.users.dto.UserDTO;
+import com.icesi.edu.users.dto.UserSensibleDTO;
 import com.icesi.edu.users.mapper.UserMapper;
 import com.icesi.edu.users.model.User;
 import com.icesi.edu.users.service.UserService;
@@ -20,7 +21,7 @@ public class UserControllerTest {
     private UserController userController;
     private UserMapper userMapper;
     private UserService userService;
-    private UserDTO testUser;
+    private UserSensibleDTO testUser;
     private User userResponse;
     private UUID id1;
 
@@ -32,15 +33,15 @@ public class UserControllerTest {
         userController = new UserController(userService, userMapper);
 
         id1 = UUID.randomUUID();
-        testUser = new UserDTO(id1, "juan@icesi.edu.co", "+573012345678", "Juan Jose", "Calderon");
-        userResponse = new User(id1, "juan@icesi.edu.co", "+573012345678", "Juan Jose", "Calderon");
+        testUser = new UserSensibleDTO(id1, "juan@icesi.edu.co", "+573012345678", "Juan Jose", "Calderon", "aA1@");
+        userResponse = new User(id1, "juan@icesi.edu.co", "+573012345678", "Juan Jose", "Calderon", "aA1@");
 
         when(userService.createUser(any())).thenReturn(userResponse);
     }
 
-    private boolean throwsException(UserDTO argUser){
+    private boolean throwsException(UserSensibleDTO argUser){
         try{
-            UserDTO userDto = userController.createUser(argUser);
+            UserSensibleDTO userDto = userController.createUser(argUser);
         }catch (RuntimeException e){
             System.out.println(e.getMessage());
             return true;

@@ -2,107 +2,113 @@ package com.icesi.edu.users.controller;
 
 import com.icesi.edu.users.api.UserAPI;
 import com.icesi.edu.users.dto.UserDTO;
+import com.icesi.edu.users.dto.UserSensibleDTO;
+import com.icesi.edu.users.error.exception.UserError;
+import com.icesi.edu.users.error.exception.UserException;
 import com.icesi.edu.users.mapper.UserMapper;
-import com.icesi.edu.users.model.User;
 import com.icesi.edu.users.service.UserService;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static com.icesi.edu.users.constant.UserErrorCode.*;
+
 @RestController
 @AllArgsConstructor
 public class UserController implements UserAPI {
 
-
     public final UserService userService;
     public final UserMapper userMapper;
 
+    public final String EMAIL_PATTERN = "^[a-zA-Z0-9._-]+@icesi\\.edu\\.co$";
+    public final String PHONE_PATTERN = "^\\+57[0-9]{10}$";
+    public final String NAME_CHAR_PATTERN = "[a-zA-Z\\s]+";
+    public final String NAME_SIZE_PATTERN = "^[a-zA-Z\\s]{1,120}$";
+    public final String PASSWORD_PATTERN = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#$%@])$";
+
     @Override
-    public UserDTO getUser(UUID userId) throws RuntimeException{
+    public UserSensibleDTO getUser(UUID userId) throws RuntimeException{
         if(userId == null){
            throw new RuntimeException("UserID can't be empty");
         }else{
-            return userMapper.fromUser(userService.getUser(userId));
+            return userMapper.fromUserToSensibleDTO(userService.getUser(userId));
         }
     }
 
     @Override
-    public UserDTO createUser(UserDTO userDTO) throws RuntimeException{
-
-        if(validateEmailOrPhone(userDTO) == false){
-            throw new RuntimeException("Email or Phone field has to be filled");
-
-        } else if (validateEmailDomain(userDTO.getEmail()) == false) {
-            throw new RuntimeException("Email domain not valid");
-
-        } else if (validateEmailUsername(userDTO.getEmail()) == false) {
-            throw new RuntimeException("Email username invalid");
-
-        } else if (validatePhoneNumber(userDTO.getPhoneNumber()) == false) {
-            throw new RuntimeException("Phone number invalid");
-
-        } else if (validateFirstNameLength(userDTO.getFirstName()) == false) {
-            throw new RuntimeException("First name is empty or exceeds limit size (120 characters)");
-
-        } else if (validateLastNameLength(userDTO.getLastName()) == false) {
-            throw new RuntimeException("Last name is empty or exceeds limit size (120 characters)");
-
-        } else if (validateFirstNameSpecialCharacters(userDTO.getFirstName()) == false) {
-            throw new RuntimeException("First name can't contain special characters nor numbers");
-
-        } else if (validateLastNameSpecialCharacters(userDTO.getLastName()) == false) {
-            throw new RuntimeException("Last name can't contain special characters nor numbers");
-
-        }else{
-            return userMapper.fromUser(userService.createUser(userMapper.fromDTO(userDTO)));
-
-        }
+    public UserSensibleDTO createUser(UserSensibleDTO userDTO) throws RuntimeException{
+        validateEmailOrPhone(userDTO);
+        validateEmailDomain(userDTO.getEmail());
+        validateEmailUsername(userDTO.getEmail());
+        validatePhoneNumber(userDTO.getPhoneNumber());
+        validateFirstName(userDTO.getFirstName());
+        validateLastName(userDTO.getLastName());
+        validateFirstNameLength(userDTO.getFirstName());
+        validateLastNameLength(userDTO.getLastName());
+        return userMapper.fromUserToSensibleDTO(userService.createUser(userMapper.fromSensibleDTOToUser(userDTO)));
     }
 
     @Override
     public List<UserDTO> getUsers() {
-        return userService.getUsers().stream().map(userMapper::fromUser).collect(Collectors.toList());
+        return userService.getUsers().stream().map(userMapper::fromUserToDTO).collect(Collectors.toList());
     }
 
-    private boolean validateEmailOrPhone(UserDTO userDTO){
-        return userDTO.getEmail() != null || userDTO.getPhoneNumber() != null;
+    private void validateEmailOrPhone(UserSensibleDTO userDTO){
+        if(userDTO.getEmail() == null || userDTO.getPhoneNumber() == null){
+            throw new UserException(HttpStatus.BAD_REQUEST, new UserError(C101, C101.getErrorMessage()));
+        }
     }
 
-    private boolean validateEmailDomain(String email){
-        return email.matches("^[a-zA-Z0-9._-]+@icesi\\.edu\\.co$");
+    private void validateEmailDomain(String email){
+        if(email.matches(EMAIL_PATTERN) == false){
+            throw new UserException(HttpStatus.BAD_REQUEST, new UserError(C102, C102.getErrorMessage()));
+        }
     }
 
-    private boolean validateEmailUsername(String email){
-        return email.matches("^[a-zA-Z0-9._-]+@icesi\\.edu\\.co$");
+    private void validateEmailUsername(String email){
+        if(email.matches(EMAIL_PATTERN) == false){
+            throw new UserException(HttpStatus.BAD_REQUEST, new UserError(C103, C103.getErrorMessage()));
+        }
     }
 
-    private boolean validatePhoneNumber(String phone){
-        return phone.matches("^\\+57[0-9]{10}$");
-    }
-    private boolean validateFirstNameLength(String firstName){
-        return firstName != null && firstName.length() <= 120;
-    }
-
-    private boolean validateLastNameLength(String lastName){
-        return lastName != null && lastName.length() <= 120;
+    private void validatePhoneNumber(String phone){
+        if(phone.matches(PHONE_PATTERN) == false){
+            throw new UserException(HttpStatus.BAD_REQUEST, new UserError(C104, C104.getErrorMessage()));
+        }
     }
 
-    private boolean validateFirstNameSpecialCharacters(String firstName){
-        return firstName.matches("[a-zA-Z\\s]+");
+    private void validateFirstName(String firstName){
+        if(firstName.matches(NAME_CHAR_PATTERN) == false){
+            throw new UserException(HttpStatus.BAD_REQUEST, new UserError(C105, C105.getErrorMessage()));
+        }
     }
 
-    private boolean validateLastNameSpecialCharacters(String lastName){
-        return lastName.matches("[a-zA-Z\\s]+");
+    private void validateLastName(String lastName){
+        if(lastName.matches(NAME_CHAR_PATTERN) == false){
+            throw new UserException(HttpStatus.BAD_REQUEST, new UserError(C106, C106.getErrorMessage()));
+        }
     }
 
+    private void validateFirstNameLength(String firstName){
+        if(firstName.matches(NAME_SIZE_PATTERN) == false){
+            throw new UserException(HttpStatus.BAD_REQUEST, new UserError(C107, C107.getErrorMessage()));
+        }
+    }
 
+    private void validateLastNameLength(String lastName){
+        if(lastName.matches(NAME_SIZE_PATTERN) == false){
+            throw new UserException(HttpStatus.BAD_REQUEST, new UserError(C108, C108.getErrorMessage()));
+        }
+    }
 
-
-
-
-
+    private void validatePassword(String password){
+        if(password.matches(PASSWORD_PATTERN) == false){
+            throw new UserException(HttpStatus.BAD_REQUEST, new UserError(C109, C109.getErrorMessage()));
+        }
+    }
 
 }

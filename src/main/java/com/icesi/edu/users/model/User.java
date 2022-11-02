@@ -24,14 +24,12 @@ public class User {
     @Id
     @Type(type="org.hibernate.type.UUIDCharType")
     private UUID id;
-
     private String email;
-
     private String phoneNumber;
-
     private String firstName;
-
     private String lastName;
+    private String password;
+
 
     @PrePersist
     public void generateId(){
