@@ -33,7 +33,7 @@ public class UserController implements UserAPI {
     @Override
     public UserSensibleDTO getUser(UUID userId) throws RuntimeException{
         if(userId == null){
-           throw new RuntimeException("UserID can't be empty");
+            throw new RuntimeException("UserID can't be empty");
         }else{
             return userMapper.fromUserToSensibleDTO(userService.getUser(userId));
         }
