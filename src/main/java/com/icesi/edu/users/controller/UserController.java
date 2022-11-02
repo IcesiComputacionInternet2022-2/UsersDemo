@@ -11,6 +11,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -40,7 +41,7 @@ public class UserController implements UserAPI {
     }
 
     @Override
-    public UserSensibleDTO createUser(UserSensibleDTO userDTO) throws RuntimeException{
+    public UserSensibleDTO createUser(@Valid UserSensibleDTO userDTO) throws RuntimeException{
         validateEmailOrPhone(userDTO);
         validateEmailDomain(userDTO.getEmail());
         validateEmailUsername(userDTO.getEmail());
@@ -102,12 +103,6 @@ public class UserController implements UserAPI {
     private void validateLastNameLength(String lastName){
         if(lastName.matches(NAME_SIZE_PATTERN) == false){
             throw new UserException(HttpStatus.BAD_REQUEST, new UserError(C108, C108.getErrorMessage()));
-        }
-    }
-
-    private void validatePassword(String password){
-        if(password.matches(PASSWORD_PATTERN) == false){
-            throw new UserException(HttpStatus.BAD_REQUEST, new UserError(C109, C109.getErrorMessage()));
         }
     }
 
