@@ -14,7 +14,7 @@ public class PasswordValidator implements ConstraintValidator<CustomAnnotations.
     @Override
     public boolean isValid(String password, ConstraintValidatorContext constraintValidatorContext) {
 
-        String passwordPatter = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#$%@])$";
+        String passwordPatter = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{4,}$";
 
         if(password.matches(passwordPatter) == false){
             throw new UserException(HttpStatus.BAD_REQUEST, new UserError(C109, C109.getErrorMessage()));
