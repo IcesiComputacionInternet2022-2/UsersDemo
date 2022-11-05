@@ -10,6 +10,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -33,5 +34,5 @@ public class UserDTO {
     @Size(min = 1, max = 120)
     private String lastName;
 
-
+    private LocalDate localDate;
 }
