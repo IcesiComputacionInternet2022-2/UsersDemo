@@ -8,6 +8,7 @@ import org.hibernate.annotations.Type;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
@@ -35,6 +36,9 @@ public class User {
     private String lastName;
 
     private String password;
+
+    @ManyToOne
+    private Role role;
 
 
     @PrePersist
