@@ -11,5 +11,5 @@ public class RoleDTO {
 
     private String description;
 
-    private List<PermissionDTO> permissionDTOS;
+    private List<PermissionDTO> rolePermissions;
 }

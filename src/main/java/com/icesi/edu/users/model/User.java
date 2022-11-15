@@ -6,12 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Type;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.PrePersist;
-import javax.persistence.Table;
-import java.time.LocalDateTime;
+import javax.persistence.*;
 import java.util.UUID;
 
 
@@ -24,7 +19,7 @@ import java.util.UUID;
 public class User {
 
     @Id
-    @Type(type="org.hibernate.type.UUIDCharType")
+    @Type(type="org.hibernate.type.PostgresUUIDType")
     private UUID id;
 
     private String email;
@@ -38,6 +33,7 @@ public class User {
     private String password;
 
     @ManyToOne
+    @JoinColumn(name = "role_id")
     private Role role;
 
 

@@ -1,10 +1,15 @@
 package com.icesi.edu.users.mapper;
 
+import com.icesi.edu.users.dto.PermissionDTO;
+import com.icesi.edu.users.dto.RoleDTO;
 import com.icesi.edu.users.dto.UserCreateDTO;
 import com.icesi.edu.users.dto.UserDTO;
+import com.icesi.edu.users.model.Permission;
+import com.icesi.edu.users.model.Role;
 import com.icesi.edu.users.model.User;
 import org.mapstruct.Mapper;
 
+import java.util.List;
 import java.util.UUID;
 
 @Mapper(componentModel = "spring")

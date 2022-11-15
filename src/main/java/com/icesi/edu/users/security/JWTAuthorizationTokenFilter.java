@@ -41,7 +41,7 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.UUID;
 
-@Component
+//@Component
 @Order(1)
 public class JWTAuthorizationTokenFilter extends OncePerRequestFilter {
     

@@ -16,7 +16,7 @@
             <column name="last_name" type="varchar(255)" />
             <column name="password" type="varchar(255)" />
             <column name="role_id" type="UUID">
-                <constraints nullable="false" references="role(role_id)" foreignKeyName="fk-user-role"/>
+                <constraints nullable="false" references="user_role(role_id)" foreignKeyName="fk-user-role"/>
             </column>
         </createTable>
     </changeSet>
