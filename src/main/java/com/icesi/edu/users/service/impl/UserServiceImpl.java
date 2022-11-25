@@ -6,8 +6,8 @@ import com.icesi.edu.users.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -25,11 +25,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User createUser(User userDTO) {
-        if(notRepeatAttributes(userDTO)) {
-            return userRepository.save(userDTO);
-        } else {
-            throw new RuntimeException();
-        }
+        validEmail(userDTO);
+        validPhoneNumber(userDTO);
+        return userRepository.save(userDTO);
     }
 
     @Override
@@ -37,14 +35,20 @@ public class UserServiceImpl implements UserService {
         return StreamSupport.stream(userRepository.findAll().spliterator(),false).collect(Collectors.toList());
     }
 
-    private boolean notRepeatAttributes(User userDTO){
-        List<User> users = getUsers();
-        for(User user : users){
-            String emailCurrent = userDTO.getEmail(), emailOldest = user.getEmail();
-            String phoneCurrent = userDTO.getPhoneNumber(), phoneOldest = user.getPhoneNumber();
-            if(emailCurrent.equalsIgnoreCase(emailOldest) || phoneCurrent.equals(phoneOldest))
-                return false;
+    private void validEmail(User userDTO){
+        if(userDTO.getEmail() != null) {
+            Optional<User> userFound = userRepository.findByEmail(userDTO.getEmail());
+            if(userFound.isPresent())
+                throw new RuntimeException();
         }
-        return true;
     }
+
+    private void validPhoneNumber(User userDTO){
+        if(userDTO.getPhoneNumber() != null) {
+            Optional<User> userFound = userRepository.findByPhoneNumber(userDTO.getPhoneNumber());
+            if(userFound.isPresent())
+                throw new RuntimeException();
+        }
+    }
+
 }

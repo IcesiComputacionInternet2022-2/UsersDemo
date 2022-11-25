@@ -27,52 +27,60 @@ public class UserController implements UserAPI {
 
     @Override
     public UserDTO createUser(UserDTO userDTO) {
-        if(isValidUser(userDTO)){
-            if((userDTO.getEmail() != null && isValidEmailDomain(userDTO) && isValidEmail(userDTO)) ||
-                    (userDTO.getPhoneNumber() != null && isValidPrefixNumber(userDTO) && isValidPhoneNumber(userDTO))) {
-                if(isValidName(userDTO) && isValidNameLength(userDTO)){
-                    return userMapper.fromUser(userService.createUser(userMapper.fromDTO(userDTO)));
-                }
-            }
-        }
-        throw new RuntimeException();
+        isValidUser(userDTO);
+        isValidEmailDomain(userDTO);
+        isValidEmail(userDTO);
+        isValidPrefixPhoneNumber(userDTO);
+        isValidPhoneNumberLength(userDTO);
+        isValidPhoneNumber(userDTO);
+        isValidNameLengthSum(userDTO);
+        isValidName(userDTO);
+        return userMapper.fromUser(userService.createUser(userMapper.fromDTO(userDTO)));
     }
 
-    private boolean isValidUser(UserDTO userDTO){
-        return userDTO != null && userDTO.getFirstName() != null && userDTO.getLastName() != null;
+    private void isValidUser(UserDTO userDTO){
+        if(userDTO == null || (userDTO.getEmail() == null && userDTO.getPhoneNumber() == null) || userDTO.getFirstName() == null || userDTO.getLastName() == null)
+            throw new RuntimeException();
     }
 
-    private boolean isValidEmailDomain(UserDTO userDTO){
-        String email = userDTO.getEmail();
-        return email.substring(email.length() - DOMAIN.length()).equals(DOMAIN);
+    private void isValidEmailDomain(UserDTO userDTO){
+        if(userDTO.getEmail() != null && !userDTO.getEmail().endsWith(DOMAIN))
+            throw new RuntimeException();
     }
 
-    private boolean isValidEmail(UserDTO userDTO){
-        String email = userDTO.getEmail();
-        email = email.substring(0, email.length() - DOMAIN.length());
-        return email.matches("^[a-zA-Z0-9]*$");
+    private void isValidEmail(UserDTO userDTO){
+        if(userDTO.getEmail() != null && !userDTO.getEmail().substring(0, userDTO.getEmail().length() - DOMAIN.length()).matches("^[a-zA-Z0-9]*$"))
+            throw new RuntimeException();
     }
 
-    private boolean isValidPrefixNumber(UserDTO userDTO){
-        String phoneNumber = userDTO.getPhoneNumber();
-        return phoneNumber.substring(0, 3).equals("+57");
+    private void isValidPrefixPhoneNumber(UserDTO userDTO){
+        if(userDTO.getPhoneNumber() != null && !userDTO.getPhoneNumber().startsWith("+57"))
+            throw new RuntimeException();
     }
 
-    private boolean isValidPhoneNumber(UserDTO userDTO){
-        String phoneNumber =  userDTO.getPhoneNumber().substring(3);
-        return phoneNumber.matches("^[0-9]*$");
+    private void isValidPhoneNumberLength(UserDTO userDTO){
+        if(userDTO.getPhoneNumber() != null && !(userDTO.getPhoneNumber().substring(3).length() == 10))
+            throw new RuntimeException();
     }
 
-    private boolean isValidNameLength(UserDTO userDTO){
-        return userDTO.getFirstName().length() <= 120 && userDTO.getLastName().length() <= 120;
+    private void isValidPhoneNumber(UserDTO userDTO){
+        if(userDTO.getPhoneNumber() != null && !userDTO.getPhoneNumber().substring(3).matches("^[0-9]*$"))
+            throw new RuntimeException();
     }
 
-    private boolean isValidName(UserDTO userDTO){
-        return userDTO.getFirstName().concat(userDTO.getLastName()).replaceAll(" ", "").matches("^[a-zA-Z]*$");
+    private void isValidNameLengthSum(UserDTO userDTO){
+        if(userDTO.getFirstName().length() + userDTO.getLastName().length() > 120)
+            throw new RuntimeException();
+    }
+
+    private void isValidName(UserDTO userDTO){
+        if(!userDTO.getFirstName().concat(userDTO.getLastName()).replaceAll(" ", "").matches("^[a-zA-Z]*$"))
+            throw new RuntimeException();
     }
 
     @Override
     public List<UserDTO> getUsers() {
         return userService.getUsers().stream().map(userMapper::fromUser).collect(Collectors.toList());
     }
+
 }
